@@ -1,7 +1,9 @@
 ---
-3.2 The very basics
-3.2.1 objects
+output: html_notebook
 ---
+# 3.2 The very basics  
+### 3.2.1 objects
+
 If we want to solve quadractic dqutions of ax^2 + bx + c = 0, we can use solutions like this:
 (-b- √(b^2-4ac))/2a and (-b+ √(b^2-4ac))/2a
 
@@ -14,23 +16,21 @@ b <- 1
 c <- -1
 ```
 
-we can also assign values using '=', instead of '<-', but we recommend against using '=' to avoid confusion.
+we can also assign values using **=**, instead of **<-**, but we recommend against using **=** to avoid confusion.
 
-To see the value stored in a variable, we simply ask R to evaluate 'a' and it shows the stored value:
+To see the value stored in a variable, we simply ask R to evaluate _a_ and it shows the stored value:
 ```{r}
 a
 ```
 
-A more explicit way to ask R to show us the value stored in 'a' is using 'print' like this:
+A more explicit way to ask R to show us the value stored in _a_ is using **print** like this:
 ```{r}
 print(a)
 ```
 
 
 
----
-3.2.2 The workspace
----
+### 3.2.2 The workspace
 
 As we define objects in the console, we are actually changing the workspace. We can see all the variables saved in your workspace by typing:
 ```{r}
@@ -45,7 +45,7 @@ Now since these values are saved in variables, to obtain a solution to our equat
 (-b - sqrt(b^2 - 4*a*c) ) / ( 2*a )
 ```
 
-unlike ls, most founctions require one or more 'arguments'.(argument:인수, 함수에 넘기는 어떤 값) Below is an example of how we assign an objects to the argument of the function 'log'.
+unlike ls, most founctions require one or more **arguments**.(argument:인수, 함수에 넘기는 어떤 값) Below is an example of how we assign an objects to the argument of the function **log**.
 ```{r}
 log(8)
 log(a)
@@ -61,7 +61,7 @@ for mos functions, we can also use this shorthand:
 ?log
 ```
 
-'help' page는 함수의 기본 설정 인수값이 무엇인지 보여준다. '='으로 표시되는 값이 default value. 예로 'log'는 'x' 와 'base'값이 필요한데, log의 base는 base = exp(1) 이라고 표시된데서 natural log가 default라는 것을 알 수 있다.
+**help** page는 함수의 기본 설정 인수값이 무엇인지 보여준다. '='으로 표시되는 값이 default value. 예로 **log**는 _x_ 와 _base_ 값이 필요한데, log의 base는 base = exp(1) 이라고 표시된데서 natural log가 default라는 것을 알 수 있다.
 
 If you want a quick look at the arguments without opening the help system, you can type:
 ```{r}
@@ -89,7 +89,7 @@ If using the arguments’ names, then we can include them in whatever order we w
 log(base = 2, x = 8)
 ```
 
-To specify arguments, we must use '=', and cannot use '<-'.
+To specify arguments, we must use **=**, and cannot use **<-**.
 
 There are some exceptions to the rule that functions need the parentheses(괄호) to be evaluated. Among these, the most commonly used are the arithmetic(산수) and relational operators. For example:
 ```{r}
@@ -114,9 +114,9 @@ or
 ```
 
 
----
-3.2.4. Other prebuilt objects
----
+
+### 3.2.4. Other prebuilt objects
+
 ```{r}
 install.packages("dslabs")
 ```
@@ -137,9 +137,9 @@ Inf+1
 ```
 
 
----
-3.2.5 Variable names
----
+
+### 3.2.5 Variable names
+
 variable names can be almost anything. 
 Some basic rules in R are that variable names have to start with a letter, can’t contain spaces and should not be variables that are predefined in R.
 변수는  문자로 시작해야되고, 띄우기 포함 그지고, 기존에 R에 정의되지 않은 것이어야함.
@@ -150,17 +150,17 @@ solution_2 <- (-b - sqrt(b^2 - 4*a*c)) / (2*a)
 ```
 
 
----
-3.2.6 Saving your workspace
----
-Values remain in the workspace until you end your session or erase them with the function 'rm'.
-we recommend you assign the workspace a specific name. You can do this by using the function 'save' or 'save.image'.
-To load, use the function 'load'. When saving a workspace, we recommend the suffix 'rda' or 'RData'. In RStudio, you can also do this by navigating to the 'Session' tab and choosing 'Save Workspace' as. You can later load it using the 'Load Workspace' options in the same tab.
+
+### 3.2.6 Saving your workspace
+
+Values remain in the workspace until you end your session or erase them with the function **rm**.
+we recommend you assign the workspace a specific name. You can do this by using the function **save** or **save.image**.
+To load, use the function **load**. When saving a workspace, we recommend the suffix **rda** or **RData**. In RStudio, you can also do this by navigating to the _Session_ tab and choosing _Save Workspace_ as. You can later load it using the _Load Workspace_ options in the same tab.
 
 
----
-3.2.7 Motivationg scripts
----
+
+###3.2.7 Motivationg scripts
+
 To solve another equation such as  
 3x^2 + 2x -1, 
 we can copy and paste the code above and then redefine the variables and recompute the solution:
@@ -173,9 +173,9 @@ C <- -1
 ```
 
 
----
-3.2.8 Commenting your code
----
+
+### 3.2.8 Commenting your code
+
 If a line of R code starts with the symbol #, it is not evaluated. We can use this to write reminders of why we wrote particular code. For example, in the script above we could add:
 ```{r}
 ## Code to compute solution to quadratic equation of the form ax^2 + bx + c
@@ -188,3 +188,344 @@ c <- -1
 (-b + sqrt(b^2 - 4*a*c)) / (2*a)
 (-b - sqrt(b^2 - 4*a*c)) / (2*a)
 ```
+
+
+
+
+# 3.3. Exercises
+
+1. What is the sum of the first 100 positive integers? The formula for the sum of integers 1 through n is  
+n(n+1)/2. 
+Define  n=100 and then use R to compute the sum of 1 through 100 using the formula. What is the sum?
+```{r}
+n <- 100
+n*(n+1)/2
+```
+
+2. Now use the same formula to compute the sum of the integers from 1 through 1,000.
+```{r}
+n <- 1000
+n*(n+1)/2
+```
+
+3. Look at the result of typing the following code into R:
+```{r}
+n <- 1000
+x <- seq(1,n)
+sum(x)
+```
+Based on the result, what do you think the functions seq and sum do? You can use the help system:
+```{r}
+help(seq)
+```
+seq는 seq(1,n) 을 입력했을때 1부터 n까지의 수를 나열하는 것이다. seq(a,b,c,d) 를 입력했을때 a는 시작값, b는 끝값, c는 by(increment of the sequence), d는 along with(take the length from the length of this argument) 를 타나냄.
+sum 은 입력된 값의 총합을 구하는 함수.
+
+따라서 답은 B.
+
+4. In math and programming, we say that we evaluate a function when we replace the argument with a given number. So if we type 'sqrt(4)', we evaluate the sqrt function. In R, you can evaluate a function inside another function. The evaluations happen from the inside out. Use one line of code to compute the log, in base 10, of the square root of 100.
+```{r}
+log(x = 100^2, base = 10)
+```
+
+5. Which of the following will always return the numeric value stored in x? You can try out examples and use the help system if you want.
+```{r}
+log(10^x)
+
+log10(x^10)
+
+log(exp(x))
+
+exp(log(x, base = 2))
+```
+오직 C번만이 그 결과가 1,2,3,4,5,6,.. 이렇게 입력된 x의 값이 나온다. 따라서 답은 C이다.
+
+
+
+
+# 3.4 Data types
+
+Variables in R can be of different types. For example, we need to distinguish numbers from character strings and tables from simple lists of numbers. The function **class** helps us determine what type of object we have:
+```{r}
+a <- 2
+class(a)
+```
+
+
+
+
+### 3.5 Data frames
+
+Conceptually, we can think of a data frame as a table with rows representing observations and the different variables reported for each observation defining the columns.
+A large proportion of data analysis challenges start with data stored in a data frame. For example, we stored the data for our motivating example in a data frame. You can access this dataset by loading the dslabs library and loading the _murders_ dataset using the **data** function:
+```{r}
+library(dslabs)
+data(murders)
+```
+
+To see that this is in fact a data frame, we type:
+```{r}
+class(murders)
+```
+
+
+
+
+### 3.5.1 Examining an object
+
+To see that this is in fact a data frame, we type:
+```{r}
+str(murders)
+```
+51 row, 5 variables.
+We can show the first six lines using the function **head** :
+```{r}
+head(murders)
+```
+
+
+### 3.5.2 The accessor: $
+
+For our analysis, we will need to access the different variables represented by columns included in this data frame. To do this, we use the accessor operator '$' in the following way:
+```{r}
+murders$population
+```
+
+By applying the function **str** to the object **murders**, we revealed the names for each of the five variables stored in this table. We can quickly access the variable names using:
+```{r}
+names(murders)
+```
+```{r}
+murders$p
+```
+
+
+
+### 3.5.3 Vectors: numerics, characters, and lobical
+
+The object _murders$population_ is not one number but several. We call these types of objects **vectors**.
+The function **length** tells you how many entries are in the vector:
+```{r}
+pop <- murders$population
+length(pop)
+```
+
+This particular vector is numeric since population sizes are numbers:
+```{r}
+class(pop)
+```
+
+n a numeric vector, every entry must be a number.
+
+To store character strings, vectors can also be of class **character**. For example, the state names are characters:
+```{r}
+class(murders$state)
+```
+
+Another important type of vectors are **logical** vectors. These must be either TRUE or FALSE.
+```{r}
+z <- 3==2
+z
+```
+
+```{r}
+class(z)
+```
+Here the **==** is a relational operator asking if 3 is equal to 2.
+= : 변수값 지정 vs == equality 관계기호
+
+You can see the other relational operators by typing:
+```{r}
+?Comparison
+```
+
+기본적으로 정수라도 class numeric으로 분류. class(1L)을 쓰면 class intergers(정수)로 분류. as.interger(pi)를 하자 3만 표시되고 소수자리는 버려짐..
+as.integer attempts to coerce its argument to be of integer type.
+```{r}
+class(1)
+class(1L)
+x <- pi
+as.integer(x)
+```
+
+
+
+
+### 3.5.4 Factors
+
+In the murders dataset, we might expect the region to also be a character vector. However, it is not:
+```{r}
+class(murders$region)
+```
+
+It is a factor. 
+factor : 요인(R의 데이터 중 하나, 벡터의 한 종류, 1차원 형태의 자료)
+벡터는 범주형 자료로 인식하지 못하지만 요인은 범주형 자료로 인식함
+factor(): 주로 집단별 자료를 분석하고자 할 때, 특정 자료를 범주한 자료로 변경해 줌:
+```{r}
+gender <- c("m","f","f","m","f","f")
+gender
+gender_factor <- factor(gender)
+gender_factor
+##gender 벡터는 범주형 자료가 아니지만 gender_factor자료는 m과 f로 구분되는 범주형 자료로 변모했음을 알 수 있다.
+```
+
+Factors are useful for storing categorical data. We can see that there are only 4 regions by using the **levels** function:
+```{r}
+levels(murders$region)
+```
+levels(요인) function:요인이 가지는 집단이 몇 개이며, 각 집단의 이름이 무엇인지 알고자 하는 경우 사용
+factor 함수의 arguments: x, levels, labels, ordered
+x:벡터를 지정
+levels:그룹으로 지정할 문자형 벡터를 지정, 어느 집단을 먼저 인식할 것인지 결정, 쓰지 않으면 오름차순으로 구분하여 자체적으로 그룹지정
+labels : levels에 대한 문자형 벡터를 지정(벡터의 원소값을 다른 걸로 치환)
+ordered:levels에 대한 특정한 순서를 정하고 싶으면 TRUE
+```{r}
+levels(gender_factor)
+gender_factor2 <- factor(gender, levels=c("m","f"), labels=c("남자", "여자"))
+gender_factor2
+#위의 fuction을 통해 gender라는 data를 범주화하였는데, m,f를 남자,여자로 치환
+gender_factor3 <- factor(gender, ordered=TRUE)
+gender_factor3
+#f,m의 levels에 특정 순서 정해짐
+```
+levels have an order. The dafult is for the levels to follow 알파벳 순서.
+However, we can change to different order.
+The function **reorder** let us change the order of the levels of a factor variable based on a summary computed on a numeric vector.
+우리가 지역에 따른 총합으로 순서를 변경하고 싶다. If there are values associated with each level, we can use the **reorder** and specify a data summary to determine the order. The following code takes the sum of the total murders in each region, and reorders the factor following these sums.
+(reorder를 쓰면 각 항목의 총합순에 따라 재배열됨. numeric vector에 활용가능한듯.)
+```{r}
+region <- murders$region
+value <- murders$total
+region <- reorder(region, value, Fun = sum)
+#region:atomic vector, level이 reorder될 categorical variable로 취급
+#value: region과 같은 length 의 vector로, x의 원소에 일대일 대응되며 level의 순서를 결정하는데 사용됨.
+#FUN:a funtion whose first argument is a vector and returns a scalar(방향구별x, 수치만으로 완전히 표시), to be applied to each subset of X determined by the levels of x. x의 순서를 결정하기 위해 X에 적용되는 함수.
+levels(region)
+```
+
+
+
+### 3.5.5 Lists
+
+Data frames are a special case of lists. you can store any combination of different types. Below is an example of a list we created for you:
+```{r}
+#record에는 값이 지정되있지 않고, 혹시몰라  tidyverse라는 package를 설치해보려 했지만 실패해 임의로 record를 지정해줬습니다. ㅠㅠ
+name <- "John Doe"
+name
+students_id <- 1234
+students_id
+grades <- c(95, 82, 91, 97, 93)
+grades
+final_grade <- "A"
+#문자변수를 지정할때는 ""를 사용해야하는듯
+final_grade
+record <- list(name, students_id, grades, final_grade)
+record
+#factor는 일차원:한마디로 한 주제에 대한 데이터들의 집합을 처리
+#list는 여러가지 항목에 대한 내용을 한번데 포함하는 듯하다.
+```
+As with data frames, you can extract the components of a list with the accessor **$**. In fact, data frames are a type of list.
+```{r}
+record$student_id
+```
+We can also use double square brackets ([[) like this:
+```{r}
+record[["student_id"]]
+```
+
+
+### 3.5.6 Matrices
+
+**Matrices**는 이차원:they have rows and columns. 
+character and logical vectors, entries in matrices have to be all the same types.
+We can define a matrix using the matrix function. We need to specify the number of rows and columns.
+```{r}
+mat <- matrix(1:12, 4, 3)
+#matrix(x,y,z)
+#x=data, y=nrow, z=ncol
+mat
+```
+
+You can access specific entries in a matrix using square brackets (**[**). If you want the second row, third column, you use:
+```{r}
+mat[2,3]
+```
+If you want the entire second row, you leave the column spot empty:
+```{r}
+mat[2, ]
+```
+Notice that this returns a vector, not a matrix.
+
+Similarly, if you want the entire third column, you leave the row spot empty:
+```{r}
+mat[,3]
+```
+You can access more than one column or more than one row if you like. This will give you a new matrix.
+```{r}
+mat[, 2:3]
+```
+You can subset both rows and columns:
+```{r}
+mat[1:2, 2:3]
+```
+You can also use single square brackets (**[**) to access rows and columns of a data frame:
+```{r}
+data(murders)
+murders[25,1]
+murders[2:3,]
+```
+
+
+
+# 3.6 Exercises
+
+1. Load the US murders dataset.
+```{r}
+library(dslabs)
+data(murders)
+```
+Use the function **str** to examine the structure of the _murders_ object. We can see that this object is a data frame with 51 rows and five columns. Which of the following best describes the variables represented in this data frame?
+```{r}
+str(murders)
+```
+우리는 5개의 variables를 볼 수 있고 그것은 아래의 state, abb, region, population, total. 이다.
+따라서 답은 **C** 이다.
+
+2. What are the column names used by the data frame for these five variables?
+```{r}
+names(murders)
+```
+state, abb, region, population, and total.
+
+3. Use the accessor **$** to extract the state abbreviations and assign them to the object a. What is the class of this object?
+```{r}
+murders$abb
+a <- murders$abb
+class(a)
+```
+character
+
+4. Now use the square brackets to extract the state abbreviations and assign them to the object b. Use the **identical** function to determine if a and b are the same.
+```{r}
+murders[["abb"]]
+b <- murders[["abb"]]
+?identical
+identical(a,b, num.eq = TRUE)
+```
+
+5. We saw that the region column stores a factor. You can corroborate this by typing:
+```{r}
+class(murders$region)
+```
+With one line of code, use the function **levels** and **length** to determine the number of regions defined by this dataset.
+```{r}
+length(levels(murders$region))
+```
+
+6. The function **table** takes a vector and returns the frequency of each element. You can quickly see how many states are in each region by applying this function. Use this function in one line of code to create a table of states per region.
+```{r}
+?table
+table(murders$region)
+```
+
