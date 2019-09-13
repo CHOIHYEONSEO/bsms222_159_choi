@@ -296,3 +296,195 @@ we cover two new **dplyr** verbs that make these computations easier:
 
 
 # 5.7.1 `summarize`
+**`Summarize`:summary statistic 계산**
+**새로운 table 형성, return data frame.**
+**Summarize(original data table, 새 column1 이름=function1, 새 column2 이름=function2...)**
+**2개 이상의 value return x**
+**`quantile`:quantile(0,0.5,1)->min,medium,max 송출**
+
+The `summarize` function in **dplyr** provides a way to compute summary statistics with intuitive and readable code. We start with a simple example based on heights. The heights dataset includes heights and sex reported by students in an in-class survey.
+```{r}
+library(dplyr)
+library(dslabs)
+data(heights)
+```
+
+The following code computes the average and standard deviation for females:
+```{r}
+s <- heights %>% 
+  filter(sex == "Female") %>%
+  summarize(average = mean(height), standard_deviation = sd(height))
+s
+```
+We get to choose the names of the columns of the resulting table.
+
+Because the resulting table stored in s is a data frame, we can access the components with the accessor $:
+```{r}
+s$average
+s$standard_deviation
+```
+As with most other **dplyr** functions, `summarize` is aware of the variable names and we can use them directly.
+
+We can compute any other summary that operates on vectors and returns a **single value**.
+For example, we can add the median, min and max heights like this:
+```{r}
+heights %>% 
+  filter(sex == "Female") %>%
+  summarize(median = median(height), minimum = min(height), maximum = max(height))
+```
+
+We can obtain these three values with just one line using the `quantile` function: for example, `quantile(x, c(0,0.5,1))` returns the min (0th percentile), median (50th percentile), and max (100th percentile) of the vector x. However, if we attempt to use a function like this that returns two or more values inside `summarize`:
+```{r}
+heights %>% 
+  filter(sex == "Female") %>%
+  summarize(range = quantile(height, c(0, 0.5, 1)))
+```
+we will receive an error: `Error: expecting result of length one, got : 2`. With the function `summarize`, we can only call functions that return a single value.
+
+For another example of how we can use the `summarize` function, let’s compute the average murder rate for the United States. Remember our data table includes total murders and population size for each state and we have already used **dplyr** to add a murder rate column:
+```{r}
+data(murders)
+murders <- murders %>% mutate(rate = total/population*100000)
+```
+Remember that the US murder rate is not the average of the state murder rates:
+```{r}
+summarize(murders, mean(rate))
+```
+This is because in the computation above the small states are given the same weight as the large ones. The US murder rate is the total number of murders in the US divided by the total US population. So the correct computation is:
+```{r}
+us_murder_rate <- murders %>%
+  summarize(rate = sum(total) / sum(population) * 100000)
+us_murder_rate
+```
+This computation counts larger states proportionally to their size which results in a larger value.
+**U.S의 평균을 구하려면 state rate의 평균이 아닌 sum(totla)/sum(pop)을 해야된다. state rate는 모든 값을 state 크기에 관계없이 동일하게 취급**
+
+
+
+#### 5.7.2 `pull`
+**pull:data.frame의 column값을 numeric으로 추출하고 싶을 때 사용**
+**pull(dataframe, 추출column):`$`와 비슷**
+
+The `us_murder_rate` object defined above represents just one number. Yet we are storing it in a data frame:
+```{r}
+class(us_murder_rate)
+```
+
+**since, as most dplyr functions, summarize always returns a data frame.**
+Here we show a useful trick for accessing values stored in data when using pipes: when a data object is piped that object and its columns can be accessed using the `pull` function. To understand what we mean take a look at this line of code:
+```{r}
+us_murder_rate %>% pull(rate)
+```
+
+This returns the value in the `rate` column of `us_murder_rate` making it equivalent to `us_murder_rate$rate`.
+
+To get a number from the original data table with one line of code we can type:
+```{r}
+us_murder_rate <- murders %>% 
+  summarize(rate = sum(total) / sum(population) * 100000) %>%
+  pull(rate)
+
+us_murder_rate
+```
+which is now a numeric:
+```{r}
+class(us_murder_rate)
+```
+
+
+
+#### 5.7.3 Group then summarize with `group_by`
+
+**`group_by`: 하나의 기준으로 data를 나눔 -> 이후 function은 각 group에 seperately 적용**
+
+A common operation in data exploration is to first split data into groups and then compute summaries for each group.
+The `group_by` function helps us do this.
+```{r}
+heights %>% group_by(sex)
+```
+The result does not look very different from `heights`, except we see `Groups: sex [2]` when we print the object.
+Although not immediately obvious from its appearance, this is now a special data frame called a _grouped data frame_ and **dplyr** functions, in particular `summarize`, will behave differently when acting on this object. Conceptually, you can think of this table as many tables, with the same columns but not necessarily the same number of rows, stacked together in one object. When we summarize the data after grouping, this is what happens:
+```{r}
+heights %>% 
+  group_by(sex) %>%
+  summarize(average = mean(height), standard_deviation = sd(height))
+```
+The `summarize` function applies the summarization to each group separately.
+
+For another example, let’s compute the median murder rate in the four regions of the country:
+```{r}
+murders %>% 
+  group_by(region) %>%
+  summarize(median_rate = median(rate))
+```
+
+
+
+# 5.8 Sorting data frames
+
+When examining a dataset, it is often convenient to sort the table by the different columns. We know about the `order` and `sort` function, but for ordering entire tables, the **dplyr** function `arrange` is useful. For example, here we order the states by population size:
+```{r}
+murders %>%
+  arrange(population) %>%
+  head()
+```
+
+With `arrange` we get to decide which column to sort by. To see the states by population, from smallest to largest, we arrange by `rate` instead:
+**`arrange`:한 dataset의 하나의 column을 기준으로 전체 data를 정렬**
+**`arrange(정렬할 dataset, 기준column1, 기준 column2, 기준column3...)**
+**default:작->큰, _dplyr_ 에선 `desc`씀 : arrnage(desc(rate))**
+
+Note that the default behavior is to order in ascending order. In **dplyr**, the function `desc` transforms a vector so that it is in descending order. To sort the table in descending order, we can type:
+```{r}
+murders %>% 
+  arrange(desc(rate)) %>% 
+  head()
+```
+
+
+
+#### 5.8.1 Nexted Sorting
+If we are ordering by a column with ties, we can use a second column to break the tie. Similarly, a third column can be used to break ties between first and second and so on. Here we order by `region`, then within region we order by murder rate:
+```{r}
+murders %>% 
+  arrange(region, rate) %>% 
+  head()
+```
+
+
+#### 5.8.2 The top n
+**`top_n`:`head`보다 더 많은 정보의 data를 보고 싶을 때**
+**`top_n(dataframe, row수, filter될 column(only filter! sort 위해선 `arrange`사용))**
+
+In the code above, we have used the function `head` to avoid having the page fill up with the entire dataset. If we want to see a larger proportion, we can use the `top_n` function. This function takes a data frame as it’s first argument, the number of rows to show in the second, and the variable to filter by in the third. Here is an example of how to see the top 10 rows:
+```{r}
+murders %>% top_n(10, rate)
+```
+
+
+
+# 5.9 Exercises
+**ignore "NA" : `na.rm` : mean(na_exmaple, na.rm = TRUE) > 값나옴**
+
+```{r}
+install.packages("NHANES")
+library(NHANES)
+data(NHANES)
+```
+
+To ignore the NAs we can use the na.rm argument:
+```{r}
+mean(na_example, na.rm = TRUE)
+sd(na_example, na.rm = TRUE)
+```
+
+
+1. We will provide some basic facts about blood pressure. First let’s select a group to set the standard. We will use 20-29 year old females. `AgeDecade` is a categorical variable with these ages. Note that the category is coded like " 20-29“, with a space in front! What is the average and standard deviation of systolic blood pressure as saved in the `BPSysAve` variable? Save it to a variable called `ref`.
+
+Hint: Use `filter` and `summarize` and use the `na.rm = TRUE` argument when computing the average and standard deviation. You can also filter the NA values using `filter`.
+```{r}
+ref <- NHANES %>% filter(Gender=="female" & AgeDecade==" 20-29") %>% summarize(average = mean(BPSysAve, na.rm = TRUE), standard_deviation = sd(BPSysAve, na.rm=TRUE))
+ref
+#`na.rm=TRUE`는 각 function의 ()안에 들어가야함.
+```
+
