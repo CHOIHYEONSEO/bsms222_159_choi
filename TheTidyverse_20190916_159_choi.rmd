@@ -488,3 +488,195 @@ ref
 #`na.rm=TRUE`는 각 function의 ()안에 들어가야함.
 ```
 
+2. Using a pipe, assign the average to a numeric variable `ref_avg`. Hint: Use the code similar to above and then `pull`.
+```{r}
+ref_avg <- ref %>% pull(average)
+ref_avg
+class(ref_avg)
+```
+
+3. Now report the min and max values for the same group.
+```{r}
+NHANES %>% filter(Gender == "female" & AgeDecade == " 20-29") %>% summarize(minimum = min(BPSysAve, na.rm = TRUE), maximum = max(BPSysAve, na.rm = TRUE))
+```
+
+4. Compute the average and standard deviation for females, but for each age group separately rather than a selected decade as in question 1. Note that the age groups are defined by `AgeDecade`. Hint: rather than filtering by age and gender, filter by `Gender` and then use `group_by`.
+```{r}
+NHANES %>% filter(Gender == "female") %>% group_by(AgeDecade) %>% summarize(average = mean(BPSysAve, na.rm = TRUE), standard_deviation = sd(BPSysAve, na.rm = TRUE))
+```
+
+5. Repeat exercise 4 for males.
+```{r}
+NHANES %>% filter(Gender == "male") %>% group_by(AgeDecade) %>% summarize(average = mean(BPSysAve, na.rm = TRUE), standard_deviation = sd(BPSysAve, na.rm = TRUE))
+```
+
+6. We can actually combine both summaries for exercises 4 and 5 into one line of code. This is because `group_by` permits us to group by more than one variable. Obtain one big summary table using `group_by(AgeDecade, Gender)`.
+```{r}
+NHANES %>% group_by(AgeDecade, Gender) %>% summarize(average = mean(BPSysAve, na.rm = TRUE), standard_deviation = sd(BPSysAve, na.rm = TRUE))
+```
+
+7. For males between the ages of 40-49, compare systolic blood pressure across race as reported in the `Race1` variable. Order the resulting table from lowest to highest average systolic blood pressure.
+```{r}
+NHANES %>% filter(Gender == "male", AgeDecade == " 40-49") %>% arrange(Race1)
+```
+
+
+
+# 5.10 Tibbles
+**'tbl'**
+**: tibble, data frame의 한 종류**
+**tidyverse에 적합한 형태**
+**'group_by', 'summarize' function의 출력형태**
+**c.f) `group_by`: grouped_df 종류의 tibble 출력**
+_select, filter, mutate, arrange는 입력값과 같은 형태의 data종류 출력_
+
+Tidy data must be stored in data frames. We introduced the data frame in Section 3.5 and have been using the `murders` data frame throughout the book:
+```{r}
+data(murders)
+class(murders)
+```
+
+In Section 5.7.3 we introduced the `group_by` function, which permits stratifying data before computing summary statistics. But where is the group information stored in the data frame?
+```{r}
+murders %>% group_by(region) %>% head()
+```
+
+Notice that there are no columns with this information. But, if you look closely at the output above, you see the line `A tibble: 6 x 5`. We can learn the class of the returned object using:
+```{r}
+murders %>% group_by(region) %>% class()
+```
+
+Tibbles are very similar to data frames. In fact, you can think of them as a modern version of data frames. Nonetheless there are three important differences which we describe in the next.
+_세가지 data.frames와 tibble의 차이점에 관하여_
+
+
+#### 5.10.1 Tibbles display better
+**`as_tibble`:tibble 형태로 바꿈**
+**ex)as_tibble(murders)**
+
+The print method for tibbles is more readable than that of a data frame. To see this, compare the outputs of typing `murders` and the output of murders if we convert it to a tibble. We can do this using `as_tibble(murders)`. If using RStudio, output for a tibble adjusts to your window size. To see this, change the width of your R console and notice how more/less columns are shown.
+```{r}
+murders
+murders_new <- as_tibble(murders)
+murders_new
+```
+
+
+
+#### 5.10.2 Subsets of tibbles are tibbles
+**data frame을 subset하면 dataframe이 안나오지만 tibble을 subset(특정값 추출?)하면 dataframe이 출력되 function의 입력값으로 사용하기 유리하다.**
+
+**tibble 입력시 dataframe이 안나오게 하려면 accessor `$` 사용**
+
+**tibble의 경우 NULL에 대해 설명해주어 debug에 유리**
+
+
+If you subset the columns of a data frame, you may get back an object that is not a data frame, such as a vector or scalar. For example:
+```{r}
+class(murders[,4])
+```
+is not a data frame. With tibbles this does not happen:
+```{r}
+class(as_tibble(murders)[,4])
+```
+This is useful in the tidyverse since functions require data frames as input.
+
+With tibbles, if you want to access the vector that defines a column, and not get back a data frame, you need to use the accessor `$`:
+```{r}
+class(as_tibble(murders)$population)
+```
+
+A related feature is that tibbles will give you a warning if you try to access a column that does not exist. If we accidentally write `Population` instead of `population` this:
+```{r}
+murders$Population
+```
+
+returns a NULL with no warning, which can make it harder to debug. In contrast, if we try this with a tibble we get an informative warning:
+```{r}
+as_tibble(murders)$Population
+```
+
+
+
+#### 5.10.3 Tibbles can have complex entries
+**tibble's column can be more diverse, like function or lists.**
+
+While data frame columns need to be vectors of numbers, strings or logical values, tibbles can have more complex objects, such as lists or functions. Also, we can create tibbles with functions:
+```{r}
+tibble(id = c(1, 2, 3), func = c(mean, median, sd))
+```
+
+
+#### 5.10.4 Tibbles can be grouped
+
+The function `group_by` returns a special kind of tibble: a grouped tibble. This class stores information that lets you know which rows are in which groups. The tidyverse functions, in particular the `summarize` function, are aware of the group information.
+
+
+#### 5.10.5 Create a tibble using `data_frame` istead of `data.frame`
+
+**`data_frame` : data frame 생성**
+**`data.frame`** 
+**: data frame 생성**
+**chractor 를 factor로 coerce. 막으려면 cumbersome argument:`stringAsFactors=FALSE`추가**
+
+It is sometimes useful for us to create our own data frames. To create a data frame in the tibble format, you can do this by using the `data_frame` function.
+```{r}
+grades <- data_frame(names = c("John", "Juan", "Jean", "Yao"), exam_1 = c(95, 80, 90, 85), exam_2 = c(90, 85, 85, 90))
+grades
+```
+
+Note that base R (without packages loaded) has a function with a very similar name, `data.frame`, that can be used to create a regular data frame rather than a tibble. One other important difference is that by default `data.frame` coerces characters into factors without providing a warning or message:
+```{r}
+grades <- data.frame(names = c("John", "Juan", "Jean", "Yao"), exam_1 = c(95, 80, 90, 85), exam_2 = c(90, 85, 85, 90))
+
+class(grades$names)
+```
+
+To avoid this, we use the rather cumbersome argument `stringsAsFactors`:
+```{r}
+grades <- data.frame(names = c("John", "Juan", "Jean", "Yao"), exam_1 = c(95, 80, 90, 85), exam_2 = c(90, 85, 85, 90),
+stringsAsFactors = FALSE)
+class(grades$names)
+```
+
+To convert a regular data frame to a tibble, you can use the as_tibble function.
+```{r}
+as_tibble(grades) %>% class()
+```
+
+
+
+
+# 5.11 The dot operator
+
+One of the advantages of using the pipe `%>%` is that we do not have to keep naming new objects as we manipulate the data frame. As quick reminder, if we want to compute the median murder rate for states in the southern states, instead of typing:
+```{r}
+tab_1 <- filter(murders, region == "South")
+tab_2 <- mutate(tab_1, rate = total / population * 10^5)
+rates <- tab_2$rate
+median(rates)
+```
+
+We can avoid defining any new intermediate objects by instead typing:
+```{r}
+filter(murders, region == "South") %>% 
+  mutate(rate = total / population * 10^5) %>% 
+  summarize(median = median(rate)) %>%
+  pull(median)
+```
+
+We can do this because each of these functions takes a data frame as the first argument. But what if we want to access a component of the data frame. For example, what if the `pull` function was not available and we wanted to access `tab_2$rate`? What data frame name would we use? The answer is the **dot operator**.
+
+For example to access the rate vector without the `pull` function we could use
+```{r}
+rates <-filter(murders, region == "South") %>% 
+  mutate(rate = total / population * 10^5) %>% 
+  .$rate
+median(rates)
+```
+
+In the next section, we will see other instances in which using the `.` is useful.
+
+
+
+# 5.12 `do`
