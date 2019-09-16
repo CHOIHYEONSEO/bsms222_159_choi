@@ -883,7 +883,7 @@ murders %>% select(population) %>% log() %>% summarize(average = mean(population
 
 
 5. Use the `map_df` to create a data frame with three columns named `n`, `s_n`, and `s_n_2`. 
-The first column should contain the numbers 1 through 100. The second and third columns should each contain the sum of 1 through  n with n the row number.
+The first column should contain the numbers 1 through 100. The second and third columns should each contain the sum of 1 through  n with n the row number..
 ```{r}
 my_function <- function(n){
   x <- 1:n
