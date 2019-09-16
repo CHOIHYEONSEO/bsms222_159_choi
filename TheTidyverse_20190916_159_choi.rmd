@@ -182,7 +182,7 @@ You can use other logical vectors to filter rows.
 
 Use `filter` to show the top 5 states with the highest murder rates. After we add murder rate and rank, do not change the murders dataset, just show the result. Remember that you can filter based on the `rank` column.
 ```{r}
-filter(murders, rank <= 5)
+dplyr::filter(murders, rank <= 5)
 ```
 
 5. We can remove rows using the `!=` operator. For example, to remove Florida, we would do this:
