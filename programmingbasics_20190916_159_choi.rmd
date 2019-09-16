@@ -190,8 +190,7 @@ Use points defined by  n=1,…,25.
 n<-1:25
 plot(n, s_n)
 ```
-12. Confirm that the formula for this sum is  Sn=n(n+1)(2n+1)/
-6
+12. Confirm that the formula for this sum is  Sn=n(n+1)(2n+1)/6
 ```{r}
 my_function <- function(n){n*(n+1)*(2*n+1)/6}
 n <- 1:25
