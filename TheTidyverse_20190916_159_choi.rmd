@@ -874,7 +874,7 @@ c <- group_by(murders, region)
 class(c)
 ```
 
-4. Write tidyverse code that is equivalent to this code: `exp(mean(log(murders$population)))`. Write it using the pipe so that each function is called without arguments. Use the dot operator to access the population. Hint: The code should start with `murders %>%`.
+4. Write tidyverse code that is equivalent to this code: `exp(mean(log(murders$population)))`. Write it using the pipe so that each function is called without arguments. Use the dot operator to access the population. Hint: The code should start with `murders %>%`..
 ```{r}
 ?exp
 murders %>% select(population) %>% log() %>% summarize(average = mean(population)) %>% exp()
