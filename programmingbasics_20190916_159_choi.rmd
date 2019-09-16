@@ -106,12 +106,12 @@ Other functionals are `apply`, `lapply`, `tapply`, `mapply`, `vapply`, and `repl
 1. What will this conditional expression return?
 ```{r}
 x <- c(1,2,-3,4)
+
 if(all(x>0)){
   print("All Postives")
 } else{
   print("Not all positives")
 }
-#Not all positives
 ```
 
 2. Which of the following expressions is always FALSE when at least one entry of a logical vector x is TRUE?
