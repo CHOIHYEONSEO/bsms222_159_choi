@@ -480,7 +480,7 @@ p <- murders %>% ggplot()
 
 
 What is class of the object `p`?
-```{r}
+```{r echo=TRUE}
 class(p)
 ##ggplot
 ```
@@ -497,7 +497,7 @@ print(x)
 ```
 
 Print the object `p` defined in exercise one and describe what you see.
-```{r}
+```{r echo=TRUE}
 print(p)
 ##B. A blank slate plot
 ```
@@ -505,14 +505,14 @@ print(p)
 
 
 3. Using the pipe `%>%`, create an object `p` but this time associated with the `heights` dataset instead of the `murders` dataset.
-```{r}
+```{r echo=TRUE}
 p <- heights %>% ggplot()
 ```
 
 
 
 4. What is the class of the object `p` you have just created?
-```{r}
+```{r echo=TRUE}
 class(p)
 ## ggplot
 ```
@@ -521,7 +521,7 @@ class(p)
 
 5. Now we are going to add a layers and the corresponding aesthetic mappings. 
 For the murders data we plotted total murders versus population sizes. Explore the `murders` data frame to remind yourself what are the names for these two variables and select the correct answer. Hint: Look at `?murders`.
-```{r}
+```{r echo=TRUE}
 ?murders
 ##C. `total` and `population`.
 ```
@@ -534,7 +534,7 @@ murders %>% ggplot(aes(x = , y = )) +
   geom_point()
 ```
 except we have to define the two variables `x` and `y`. Fill this out with the correct variable names.
-```{r}
+```{r echo=TRUE}
 murders %>% ggplot(aes(x = population, y = total)) + geom_point()
 ```
 
@@ -547,7 +547,7 @@ murders %>% ggplot(aes(population, total)) +
 ```
 
 Remake the plot but now with total in the x-axis and population in the y-axis.
-```{r}
+```{r echo=TRUE}
 murders %>% ggplot(aes(total, population)) + geom_point()
 ```
 
@@ -561,14 +561,14 @@ murders %>% ggplot(aes(population, total)) +
 will give us the error message: 
 `Error: geom_label requires the following missing aesthetics: label`
 Why this?
-```{r}
+```{r echo=TRUE}
 #A. We need to map a character to each point through the label argument in aes.
 ```
 
 
 
 9. Rewrite the code above to abbreviation as the label through `aes`
-```{r}
+```{r echo=TRUE}
 murders %>% ggplot(aes(population, total, label = abb)) +
   geom_label()
 ```
@@ -576,14 +576,14 @@ murders %>% ggplot(aes(population, total, label = abb)) +
 
 
 10. Change the color of the labels through blue. How will we do this?
-```{r}
+```{r echo=TRUE}
 #D. Because we want all colors to be blue, we do not need to map colors, just use the color argument in geom_label
 ```
 
 
 
 11. Rewrite the code above to make the labels blue.
-```{r}
+```{r echo=TRUE}
 murders %>% ggplot(aes(population, total, label = abb)) +
   geom_label(color = "blue")
 ```
@@ -591,13 +591,13 @@ murders %>% ggplot(aes(population, total, label = abb)) +
 
 
 12. Now suppose we want to use color to represent the different regions. In this case which of the following is most appropriate:
-```{r}
+```{r echo=TRUE}
 #B. Because each label needs a different color we map the colors through the color argument of aes .
 ```
 
 
 13. Rewrite the code above to make the labels’ color be determined by the state’s region.
-```{r}
+```{r echo=TRUE}
 murders %>% ggplot(aes(population, total, label = abb, col = region)) + geom_label()
 ```
 
@@ -611,20 +611,20 @@ p <- murders %>%
 ```
 To change the y-axis to a log scale we learned about the `scale_x_log10()` function. Add this layer to the object p to change the scale and render the plot
 
-```{r}
+```{r echo=TRUE}
 p + scale_x_log10()
 ```
 
 
 15. Repeat the previous exercise but now change both axes to be in the log scale.
-```{r}
+```{r echo=TRUE}
 p + scale_x_log10() + scale_y_log10()
 ```
 
 
 
 16. Now edit the code above to add the title “Gun murder data” to the plot. Hint: use the `ggtitle` function.
-```{r}
+```{r echo=TRUE}
 p + scale_x_log10() + scale_y_log10() + ggtitle("Gun murder data")
 ```
 
