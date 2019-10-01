@@ -54,7 +54,7 @@ Numerical data that are not categorical also have distributions. In general, whe
 
 Statistics textbooks teach us that a more useful way to define a distribution for numeric data is to define a function that reports the proportion of the data below _a_ for all possible values of _a_. 
 This function is called the cumulative distribution function (CDF). In statistics, the following notation is used:
-**F(a) = Pr(x<a)
+F(a) = Pr(x<a)
 
 we can report the proportion of values between any two heights, say _a_ and _b_, by computingF(b) − F(a). 
 This means that if we send this plot above to ET, he will have all the information needed to reconstruct the entire list. Paraphrasing the expression “a picture is worth a thousand words”, in this case, a picture is as informative as 812 numbers.
