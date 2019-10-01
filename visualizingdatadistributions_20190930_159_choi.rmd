@@ -3,7 +3,7 @@ title: "R Notebook"
 output: html_notebook
 ---
 
-# Chapter 0 Visualizing data distributions
+# Chapter 9 Visualizing data distributions
 
 # 9.1 Variable types
 
@@ -154,7 +154,7 @@ Based on this plot, how many males are between 63.5 and 65.5?
 
 
 
-#9.8 The normal distribution
+# 9.8 The normal distribution
 Histograms and density plots provide excellent summaries of a distribution. But can we summarize even further? We often see the average and standard deviation used as summary statistics: a two-number summary! To understand what these summaries are and why they are so widely used, we need to understand the normal distribution.
 
 The normal distribution, also known as the bell curve and as the Gaussian distribution, is one of the most famous mathematical concepts in history. A reason for this is that approximately normal distributions occur in many situations, including gambling winnings, heights, weights, blood pressure, standardized test scores, and experimental measurement errors. There are explanations for this, but we describe these later. Here we focus on how the normal distribution helps us summarize data.
