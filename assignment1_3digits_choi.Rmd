@@ -32,8 +32,7 @@ gnomAD_AF
 c.f) exon=진유전자
 
 SIFT : SIFT prediction and/or score
-SIFT는 내성이 없는 아미노산 치환을 허용하지 않고 단백질의 아미노산 치환이 표현형 효과를 가지는지 아닌지를 예측하는 서열 상동성 기반 도구이다. SIFT는 단백질 진화가 단백질 기능과 상호 관련된다는 전제에 기반을 두고 있다. 중요하지 않은 위치는 배열에서 다양하게 보일 반면, 기능에 중요한 위치는 단백질 군의 정렬에서 보존되어야 한다.
--로 표시된 것 : 아미노산이 치환되지 않은것
+SIFT는 내성이 없는 아미노산 치환을 허용하지 않고 단백질의 아미노산 치환이 표현형 효과를 가지는지 아닌지를 예측하는 서열 상동성 기반 도구이다. SIFT는 단백질 진화가 단백질 기능과 상호 관련된다는 전제에 기반을 두고 있다. 중요하지 않은 위치는 배열에서 다양하게 보일 반면, 기능에 중요한 위치는 단백질 군의 정렬에서 보존되어야 한다.(-로 표시된 것 : 아미노산이 치환되지 않은것)
 
 PolyPhen : PolyPhen prediction and/or score
 SNP/mutation 데이터베이스로써, PolyPhen-2 (Polymorphism Phenotyping v2)는 직접적인 물리적 및 비교 고려 사항을 사용하여 인간 단백질의 구조와 기능에 대한 아미노산 치환의 영향을 예측하는 도구이다.
@@ -58,10 +57,10 @@ print(d1)
 
 
 
-#### 2-1. SIFT와 PolyPhen
-우선 이 두개를 비교해보기로 했다. 두가지 column은 모두 단백질 아미노산의 치환과 그것이 표현형에 끼치는 영향력과 관련된 variant이다. 정의가 비슷한 이 두 variant관의 관계가 궁금했다.
-또한 개인적으로 column들을 조사하다 찾은 아래의 주소에서 두 variant가 매우 유사하다는 정보를 확인할 수 도 있었다.(https://www.liebertpub.com/doi/full/10.1089/gtmb.2010.0036)
 
+#### 2-1. SIFT와 PolyPhen
+
+우선 이 두개를 비교해보기로 했다. 두가지 column은 모두 단백질 아미노산의 치환과 그것이 표현형에 끼치는 영향력과 관련된 variant이다. 정의가 비슷하다.
 이를 바탕으로 data를 확인하기에 앞서 아래와 같은 가설을 세웠다.
 **sift는 값이 클수록 tolerate하고 polyphen은 값이 클수록 damaging하다. 그리고 둘은 정의가 유사하므로 서로 연관성을 띌 것이며, 이는 기울기가 감소하는 그래프로 나타날 것이다. **
 
@@ -69,8 +68,6 @@ print(d1)
 데이터를 확인해보았다.
 ```{r echo=TRUE}
 d1 %>% ggplot(aes(as.numeric(sift_n), as.numeric(poly_n))) + geom_point(size = 0.5, col = 'purple') + labs(x='SIFT', y='PolyPhen', title = 'Relationship between SIFT&PolyPhen')
-
-
 ```
 이 그래프는 명확한 결과를 보여주진 않지만, 가설대로 polyphen과 sift의 수치가 반비례관계처럼 보인다.
 
@@ -84,12 +81,11 @@ d1 %>% group_by(sift_c) %>% count(poly_c)
 위의 그래프를 범례를 사용해 다시 살펴보았다.
 ```{r echo=TRUE}
 d1 %>% ggplot(aes(as.numeric(sift_n), as.numeric(poly_n), col = sift_c)) + geom_point(size = 0.5) + labs(x='SIFT', y='PolyPhen', title = 'Relationship between SIFT&PolyPhen', color = "SIFT")
-
-d1 %>% ggplot(aes(as.numeric(sift_n), as.numeric(poly_n), col = poly_c)) + geom_point(size = 0.5) + labs(x='SIFT', y='PolyPhen', title = 'Relationship between SIFT&PolyPhen', color = "PolyPhen")
 ```
 살펴본 결과 두가지 결과를 확인할 수 있었다.
 
-1.sift가 deleterious할때 polyphen값은 전 영역에 걸쳐 분포한다.
+1. sift가 deleterious할때 polyphen값은 전 영역에 걸쳐 분포한다.
+
 2. 전체적으로 x축과 y축 근처에 많은 값들이 모여있다.
 
 이 두가지에 대하서는 뒤에서 2-3에서 설명하였다.
@@ -98,16 +94,21 @@ d1 %>% ggplot(aes(as.numeric(sift_n), as.numeric(poly_n), col = poly_c)) + geom_
 
 #### 2-2. SIFT와 PolyPhen, MPC의 관계
 
-MPC역시 SIFT, PolyPhen과 같은 측정방법의 일종이다. 따라서 3-1에서의 방법을 사용하여 세 variable을 비교하면 된다고 생각하여 아래처럼 그래프를 그려보았다..
+MPC역시 SIFT, PolyPhen과 같은 측정방법의 일종이다. 그래서 2-1과 마찬가지로 이 셋 사이에도 관련성이 있을것이라 예상했다. 데이터 분석은 2-1과 동일하게 scatterplot을 그려보았다.
+
 ```{r echo=TRUE}
 d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = sift_c)) + geom_point(size = 0.5) + labs(x='MPC', y='PolyPhen', title = 'Relationship between MPC&PolyPhen&SIFT', color = "SIFT")
 ```
 두가지 사실을 확인할 수 있다.
+
 1. mpc가 커질수록 polyphen의 damaging의 비율이 높아진다.
+
 2. sift역시 mpc의 값이 커질수록 deleterious로 값이 치우친다.
 
 이를 통해 MPC도 polyphen, sift와 관련이 있다는 것은 알 수 있다. 다만 3-1의 의문처럼 
-1. MPC값에 따라 sift와 polyphen의 값의 비율에 변화가 생기지만, 그것들이 그렇게 명확하지는 않다.
+
+1. MPC, sift, polyphen 사이에 연관관계가 존재하지만, 매우 명확하지는 않다.
+
 2. 대부분의 값들이 x축의 왼쪽부근과 y축의 위쪽부근, 즉 저위험군과 고위험군에 쏠려있다
 
 는 사실을 볼 수 있다.
@@ -117,7 +118,9 @@ d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = sift_
 #### 2-3. 의문 탐구
 
 2-1과 2-2에서 나는 두가지 의문점을 가졌다.
-1. sift, polyphen, MPC사이의 상관관계에 완벽하게 명확하지 않다.
+
+1. sift, polyphen, MPC사이의 상관관계가 완벽하게 명확치는 않다.
+
 2. 데이터값들은 연속적으로 고르게 분포한게 아니라 저위험군과 고위험군 양 극단에 쏠려 분포한다. 이 밀집집단들이 의미하는 것은 무엇인가?
 
 먼저 첫번째 의문점에 대해 생각해보았다.
@@ -129,9 +132,9 @@ sift, polyphen, MPC는 모두 유전자의 염기서열의 변화가 어떻게 �
 p = read.csv('https://www.dropbox.com/s/he7r6v4hxu0ibno/tableS1.Sanders2018.txt?dl=1', sep='\t')
 print(p)
 ```
-새로운 데이터 p는 SCN2A에 문제를 가진 환자들의 데이터이다. 즉, 이 데이터의 variant 타입(Chr, Pos_hg19, Ref, Alt)와 일치하는 d의 데이터는 환자로, 아니면 일반인으로 구분할 수 있을 것이다.
+새로운 데이터 p는 SCN2A에 문제를 가진 환자들의 데이터이다. 즉, 이 데이터의 variant 정보(Chr, Pos_hg19, Ref, Alt)와 일치하는 d1의 데이터는 환자로, 아니면 일반인으로 구분할 수 있을 것이다.
 
-d1의 variant가 p에 존재하면 'patient', 그렇지 않으면 'normal'값을 지정하는 새로운 column 'disease'를 d1에 추가한다.
+d1의 variant 정보가 p에 존재하면 'patient', 그렇지 않으면 'normal'값을 지정하는 새로운 column 'disease'를 d1에 추가한다.
 ```{r echo=TRUE}
 p <- p %>% unite(., col = disease, Chr, Pos_hg19, Ref, Alt, sep = ':', remove=TRUE)
 disease<- dplyr::pull(p, disease)
@@ -162,10 +165,10 @@ d1 %>% ggplot() + geom_mosaic(aes(x = product(poly_c, disease), fill = sift_c)) 
 
 # 3. MPC와 gnomAD_AF의 관계
 표현형의 risk정도와 gnomAD_AF간에는 관련성이 있는지 살펴보려 한다.
-우선 3번 목차에서 MPC, SIFT, Polyphen은 연관성이 있다는 것을 확인했으므로 MPC와 gnomAD_AF의 관계만을 비교하도록 하겠다.
+단 3번 목차에서 MPC, SIFT, Polyphen은 연관성이 있다는 것을 확인했으므로 MPC와 gnomAD_AF의 관계만을 비교하도록 하겠다.
 
 #### 3-1. data 정리
-MPC, gnomAD_AF column만 선택하고, gnomAD_AF에 있는 NA와 MPC의 '-'는 정확한 의미를 알 수 없으므로 제외한 새로운 dataframe d2를 생성하도록 하겠다.
+gnomAD_AF에 있는 NA는 정확한 의미를 알 수 없으므로 제외한 새로운 dataframe d2를 생성하도록 하겠다.
 ```{r echo=TRUE}
 d2 <- d1 %>% filter(!is.na(gnomAD_AF))
 ```
@@ -183,7 +186,7 @@ d2 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(gnomAD_AF)))+ geom_p
 ```{r echo=TRUE}
 params <- d2 %>% summarize(mean = median(d2$gnomAD_AF), sd = mad(d2$gnomAD_AF))
 
-d2 %>% ggplot(aes(sample = gnomAD_AF)) +  geom_qq(dparams = params) + geom_abline() + scale_y_continuous(limits=c(-1, 1)) + scale_x_continuous(limits=c(-1, 1)) + labs(title = 'qqplot of gnomAD_AF')
+d2 %>% ggplot(aes(sample = gnomAD_AF)) +  geom_qq(dparams = params) + geom_abline() + scale_y_continuous(limits=c(-1, 1)) + scale_x_continuous(limits=c(-1, 1)) + labs(title = 'qqplot of gnomAD_AF', y = 'sample: geomAD_AF')
 ```
 이 그래프가 의미하는 것은 무엇일까? sampel, 즉 geomAD_AF의 값이 정규분포처럼 연속적으로 배치된 것이 아니라 특정 값의 빈도가 매우 높은, 일종의 category형식이라고 추측하였다.
 그래서 count 함수를 이용하여 gnomAD_AF을 파악해보았다.
@@ -211,7 +214,7 @@ d2 %>% filter(gnomAD_AF <= quantile(gnomAD_AF, 0.95)) %>% ggplot(aes(as.numeric(
 
 
 # 4. exon과 다른 variable의 관계
-exon과 MPC, SIFT, PolyPhen, disease의 관계를 비교해보고 싶었다.
+exon과 MPC, SIFT, PolyPhen, disease column들의 관계를 비교해보고 싶었다.
 
 
 #### 4.1 exon과 MPC,PolyPhen, SIFT 비교
@@ -219,44 +222,58 @@ exon과 MPC, SIFT, PolyPhen, disease의 관계를 비교해보고 싶었다.
 ```{r echo=TRUE}
 d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = sift_c)) + geom_point(size = 0.1) + facet_wrap(~EXON) + labs(title = 'relationship between exon and MPC,PolyPhen,SIFT', x= 'MPC', y = 'PolyPhen', color = 'SIFT')
 ```
+그래프를 통해 한눈에 exon에 따른 SIFT, MPC, PolyPhen의 분포를 알 수 있다. 그런데 여기에 더해 병의 여부를 나타내는 disease column의 분포도 추가하고 싶었다.
 
-d1의 sift_n column에 대하여, variant가 환자에 해당하는 경우는 기존의 sift_n값 대신 'patient'를 표시하는 새로운 column 'danger'를 포함한 dataframe d3를 만들고, 이에 따라 color를 지정하여 전체적으로 파악할 수 있게 하였다.
+
+고민끝에 d1의 sift_c column에 대하여, variant가 patient에 해당하는 경우는 기존의 sift_c값 대신 'patient'를 표시하는 새로운 column 'danger'를 포함한 dataframe d3를 만들고, 이에 따라 color를 지정하여 전체적으로 파악할 수 있게 하였다.
 ```{r}
-danger <- c(1:770)
-d3 <- ifelse(d1$disease[danger] == 'patient', print('patient'), print(d1$sift_c[danger])) %>% mutate(d1, danger = .)
+vec1 <- c(1:770)
+d3 <- ifelse(d1$disease[vec1] == 'patient', print('patient'), print(d1$sift_c[vec1])) %>% mutate(d1, danger = .)
 ```
 
 
 ```{r echo=TRUE}
-d3 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = danger)) + geom_point(size = 0.2) + facet_wrap(~EXON) + labs(title = 'relationship between exon and MPC,PolyPhen,SIFT, presence of disease', color = 'effect of variant(by SIFT)', x='MPC', y='PolyPhen')
+d3 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = danger)) + geom_point(size = 0.2) + facet_wrap(~EXON) + labs(title = 'relationship between exon and MPC,PolyPhen,SIFT, presence of disease', color = "patient/normal's SIFT", x='MPC', y='PolyPhen')
 ```
 이 그래프를 통해 알 수 있는 것은
+
 1. 모든 exon에서 SIFT, MPC, PolyPhen의 상관관계는 유효하게 적용된다.
+
 2. EXON별로 존재하는 variant수가 차이가 있다.
+
 3. EXON별로 해당 variant들의 표현형에 대한 effect의 정도(patient의 비율)에는 차이가 있다.
 
 
 
 # 5. 결론
-위의 결과들을 바탕으로 data 분석 전 세웠던 탐구주제애 대하 모두 결론을 내릴 수 있게 되었다.
+
+위의 결과들을 바탕으로 data 분석 전 세웠던 탐구주제에 대해 모두 결론을 내릴 수 있게 되었다.
+
 **1. variant의 표현형에 대한 effect와 관련된 column간의 상관관계 유무 탐구**
-상관관계가 존재한다. MPC, PolyPhen, SIFT는 모두 연관되어 있으며, MPC,PolyPhen는 비례, 그리고 이 둘과 SIFT의 수치는 반비례하는 관계를 가진다.
+
+상관관계가 존재한다. MPC, PolyPhen, SIFT는 모두 연관되어 있으며, MPC,PolyPhen 수치는 비례, 그리고 이 둘과 SIFT의 수치는 반비례하는 관계를 가진다.
 
 
 **2. 1의 column들과 exon과의 관계 탐구**
+
 이는 4-1의 최종 그래프로 설명을 할 수 있다.
 ```{r echo=TRUE}
-d3 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = danger)) + geom_point(size = 0.2) + facet_wrap(~EXON) + labs(title = 'relationship between exon and MPC,PolyPhen,SIFT, presence of disease', color = 'effect of variant(by SIFT)', x='MPC', y='PolyPhen')
+d3 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = danger)) + geom_point(size = 0.2) + facet_wrap(~EXON) + labs(title = 'relationship between exon and MPC,PolyPhen,SIFT, presence of disease', color = "patient/normal's SIFT", x='MPC', y='PolyPhen') + guides(colour = guide_legend(title.hjust = 0.5))
 ```
+
 SIFT: deleterious(patient)의 점과 toerated점의 비율이 각 exon마다 다르다.
 ex)21, 25번은 deleterious(patient)의 비율이 높은 반면  11번은 tolerated의 비율이 높다.
+
 PolyPhen: 값의 분포가 각 exon마다 다르다.
-ex) 27, 7은 낮은 값의 비율이 높은 반면 6, 16번은 높은 값의 비율이 높다.
+ex) 27, 7은 저위험군이 많은 반면 6, 16번은 고위험군이 많다.
+
 MPC: 값의 분포가 각 exon마다 다르다.
-ex) 16, 27은 높은 값의 비율이 높은 편이다.
+ex) 16, 20은 고위험군의 비율이 높은 편이다.
 
 이를 통해 각 exon별로 variant impact to phenomenon에 차이가 있다고 볼 수 있다. 단, 이것은 각 exon의 특이성과 같은 것이지, exon의 번호에 다른 순차적인 연관성은 아니다.
 
+아래는 기존의 탐구주제 외에 데이터를 분석하며 부수적으로 찾은 내용이다.
 **추가 : 1.variant 확률(gnomAD_AF)는 표현형에 대한 영향(MPC)와는 차이가 없다.**
-**2. variant들은 exon에 걸쳐 고르게 분포하지 않는다**
+
+**추가2. variant들은 exon에 걸쳐 그 수가 고르게 분포하지 않는다**
 
