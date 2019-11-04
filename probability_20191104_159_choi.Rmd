@@ -38,7 +38,7 @@ probability distribution = 0.33/0.33/0.34
 **`rep`: 반복데이터**
 beads <- rep(c=("red","blue"), times = c(2,3))
 
-**`sample`: 무ㅏㅈㄱ위로 샘플 추출**
+**`sample`: 무작위로 샘플 추출**
 arg: data(frame)-모집단, n-뽑을횟수, replace - 복원여부(T:복원, F: 비복원&dafault)
 
 **`replicate`:표현식 n번 반복**
@@ -353,6 +353,7 @@ In this plot, we can see that the values start to stabilize (that is, they vary 
 ```
 
 5. Two events A and B are independent if Pr(A and B) = Pr(A)*P(B). Under which situation are the draws independent?
+
 **b. You replace the draw.**
 
 6.  Say you’ve drawn 5 balls from the box, with replacement, and all have been yellow. What is the probability that the next one is yellow?
@@ -378,7 +379,7 @@ celtic_wins <- sample(c(0,1), 4, replace = TRUE, prob = c(0.6, 0.4))
 ```
 The Celtics must win one of these 4 games.
 
-```{r}
+```{r echo=TRUE}
 B <- 10000
 my_function <- function(n){
   celtic_wins <- sample(c(0,1), n, replace = TRUE, prob = c(0.6, 0.4)) 
@@ -397,7 +398,7 @@ a <- 1/2
 ```
 
 11. Confirm the results of the previous question with a Monte Carlo simulation.
-```{r}
+```{r echo=TRUE}
 my_function2 <- function(n){
   Cavs_win <- sample(c(0,1), n, replace = TRUE, prob = c(0.5, 0.5))
   sum(Cavs_win)
@@ -408,7 +409,7 @@ mean(results >= 4)
 
 
 12. Two teams, A and B, are playing a seven game series. Team A is better than team B and has a p > 0.5 chance of winning each game. Give a value p the probability of winning the series for the underdog team B can be computed with the following function based on a Monte Carlo simulation:
-```{r}
+```{r echo=TRUE}
 prob_win <- function(p){
   B <- 10000
   result <- replicate(B, {
@@ -419,14 +420,14 @@ prob_win <- function(p){
 }
 ```
 Use the function `sapply` to compute the probability, call it `Pr`, of winning for `p <- seq(0.5, 0.95, 0.025)`. Then plot the result.
-```{r}
+```{r echo=TRUE}
 p <- seq(0.5, 0.95, 0.025)
 pr <- sapply(p, prob_win)
 qplot(x = p, y = pr, data = data.frame(pr))
 ```
 
 13. Repeat the exercise above, but now keep the probability fixed at `p <- 0.75` and compute the probability for different series lengths: best of 1 game, 3 games, 5 games,… Specifically, `N <- seq(1, 25, 2)`. Hint: use this function:
-```{r}
+```{r echo=TRUE}
 prob_win <- function(N, p=0.75){
   B <- 10000
   result <- replicate(B, {
