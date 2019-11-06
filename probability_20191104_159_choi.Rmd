@@ -59,29 +59,29 @@ ex) set.seed(1)
     > 이 sample값에 대한 시드가 1로 지정되므로       `set.seed(1)`을 입력하면 해당 sample값이       반복
     
 
-# 14.3 Independence
+# 13.3 Independence
 독립시행 : `sample`의 replace arg = T
 
 
-# 14.4 Conditional probabilities
+# 13.4 Conditional probabilities
 Conditional porbabilities : 조건부확률
 Pr(A|B) > B가 일어났을 때 P(A)
 독립시행은 Pr(A|B) =  Pr(A)
 
 
 
-# 14.5 Addition and multiplication rules
-#### 14.5.1 Multiplication rule
+# 13.5 Addition and multiplication rules
+#### 13.5.1 Multiplication rule
 곱셈법칙: Pr(A and B) = Pr(A)*Pr(A|B)
 
-#### 14.5.2 Multiplication rule under independence
+#### 13.5.2 Multiplication rule under independence
 독립시행 : Pr(A&B) = P(A)*P(B)
 
-#### 14.5.3 Additional rule
+#### 13.5.3 Additional rule
 Pr(A or B) = Pr(A) + Pr(B) - Pr(A&B)
 
 
-# 14.6 Combinations and premutations
+# 13.6 Combinations and premutations
 
 We use `paste` to create strings by joining smaller strings. To do this, we take the number and suit of a card and create the card name like this:    
 ```{r}
@@ -442,50 +442,106 @@ win <- sapply(N, prob_win)
 qplot(x = N, y = win, data = data.frame(win))
 ```
 
+# 13.10 Continous probability
+CDF : cumulative distribution function, interval로 계산(not element)
+
+mean:특정값이 a보다 클 확률 = mean(x>a)
+
+Once a CDF is defined, we can use this to compute the probability of any subset. For instance, the probability of a student being between height a and height b is:
+```{r}
+F(b)-F(a)
+```
+
+
+# 13.11 Theorical continuous distributions
+F(a) = pnorm(a,m,s) in normal distribution
+F(a) <- Pr(x<a)
+
+#### 13.11.1 Theoritical distribution as approximation
+interval : rounded number(사람들이 대략 뭉뚱거리는 수..?)를 포함하는 게 좋음
+ex) 보통 키에 대한 조사를 한다고 하자. 170언저리인 사람들은 대략 170으로 자신의 키를 뭉뚱그리는 경향이 있다. 그럼 [169.5, 170.5]로 구간을 정하는 것이 똑똑하지 [170.1, 170.9] 이렇게 정하는 것은 멍청하다.
+
+
+#### 13.11.2 The probability density
+`dnorm` : density
+dnorm(x) : 정규분포에서 x값의 높이 <- density
+즉, 그래프 함수의 f(x)의 값
+
+
+
+# 13.12 Monte Carlo simulations for continuous variables
+`rnorm` : produce random number(결과:numeric vector)
+rnomr(n=size, m = ave, s = sd)
+
+If, for example, we pick 800 males at random, what is the distribution of the tallest person? How rare is a seven footer in a group of 800 males? The following Monte Carlo simulation helps us answer that question:
+```{r}
+install.packages("dslabs")
+library(tidyverse)
+library(dslabs)
+data(heights)
+x <- heights %>% filter(sex=="Male") %>% pull(height)
+
+
+n <- length(x)
+m <- mean(x)
+s <- sd(x)
+simulated_heights <- rnorm(n, m, s)
+```
+
+```{r}
+B <- 10000
+tallest <- replicate(B, {
+  simulated_data <- rnorm(800, m, s)
+  max(simulated_data)
+})
+```
+Having a seven footer is quite rare:
+```{r}
+mean(tallest >= 7*12)
+```
 
 
 
 
 
 
+# 13.13 Continuous distributions
+`dnorm` : 정규분포그래프에서 x의 높이
+`qnorm` : quartile
+`pnorm` : probability(pnorm(a) = Pr(x<a))
+`rnorm` : Monte Carlo simulations
 
-
-
-
-
-
-
-
-
-
-
-
+We can therefore draw a distribution like this:
+```{r}
+x <- seq(-4, 4, length.out = 100)
+qplot(x, f, geom = "line", data = data.frame(x, f = dnorm(x)))
+```
 
 # 13.14 Exercises
 1. Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 3 inches. If we pick a female at random, what is the probability that she is 5 feet or shorter?
-```{r}
+```{r echo=TRUE}
 pnorm(5*12, 64, 3)
 ```
 
 
 2.  Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 3 inches. If we pick a female at random, what is the probability that she is 6 feet or taller?
-```{r}
+```{r echo=TRUE}
 1 - pnorm(6*12, 64, 3)
 ```
 
 
 3. Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 3 inches. If we pick a female at random, what is the probability that she is between 61 and 67 inches?
-```{r}
+```{r echo=TRUE}
 pnorm(67, 64, 3) - pnorm(61, 64, 3)
 ```
 
 4. Repeat the exercise above, but convert everything to centimeters. That is, multiply every height, including the standard deviation, by 2.54. What is the answer now?
-```{r}
+```{r echo=TRUE}
 pnorm(67*2.54, 64*2.54, 3*2.54) - pnorm(61*2.54, 64*2.54, 3*2.54)
 ```
 
 5. Notice that the answer to the question does not change when you change units. This makes sense since the answer to the question should not be affected by what units we use. In fact, if you look closely, you notice that 60 and 66 are both 1 SD away from the average. Compute the probability that a randomly picked, normally distributed random variable is within 1 SD from the average.
-```{r}
+```{r echo=TRUE}
 pnorm(66, 63, 3) - pnorm(60, 63, 3)
 ```
 
@@ -502,13 +558,13 @@ So, no matter the units, the probability of X<=a is the same as the probabiliy o
 
 
 7.Imagine the distribution of male adults is approximately normal with an expected value of 69 and a standard deviation of 3. How tall is the male in the 99th percentile? Hint: use `qnorm`.
-```{r}
+```{r echo=TRUE}
 qnorm(0.99, 69, 3)
 ```
 
 
 8. The distribution of IQ scores is approximately normally distributed. The average is 100 and the standard deviation is 15. Suppose you want to know the distribution of the highest IQ across all graduating classes if 10,000 people are born each in your school district. Run a Monte Carlo simulation with `B=10000` generating 10,000 IQ scores and keeping the highest. Make a histogram.
-```{r}
+```{r echo=TRUE}
 B <- 1000
 results <- replicate(B, {rnorm(10000, 100, 15) %>% max()})
 
