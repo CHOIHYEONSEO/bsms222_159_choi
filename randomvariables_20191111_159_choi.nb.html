@@ -1751,10 +1751,834 @@ summary {
 <!-- rnb-text-begin -->
 <div id="chapter-14.-random-variables" class="section level1">
 <h1>Chapter 14. Random Variables</h1>
+<div id="random-variables" class="section level2">
+<h2>14.1 Random Variables</h2>
+<p>:실행할 때마다 다른 값이 나오는 변수</p>
+<p>Here <code>X</code> is a random variable: every time we select a new bead the outcome changes randomly. See below:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFibGUoZXZlbnRzKVxuXG5gYGAifQ== -->
+<pre class="r"><code>table(events)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiZXZlbnRzXG4gICAgIC0xICAgICAgIDEgXG40NjEwMDAwIDUzOTAwMDAgXG4ifQ== -->
+<pre><code>events
+     -1       1 
+4610000 5390000 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="sampling-models" class="section level2">
+<h2>14.2 Sampling models</h2>
+<p>[<a href="urn:individuals" class="uri">urn:individuals</a> assigned] -&gt;(draw)-&gt; Random</p>
+<p>Because we know the proportions of 1s and -1s, we can generate the draws with one line of code, without defining <code>color</code>:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwXG5YIDwtIHNhbXBsZShjKC0xLDEpLCBuLCByZXBsYWNlID0gVFJVRSwgcHJvYj1jKDkvMTksIDEwLzE5KSlcbmBgYCJ9 -->
+<pre class="r"><code>n &lt;- 1000
+X &lt;- sample(c(-1,1), n, replace = TRUE, prob=c(9/19, 10/19))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We call this a <strong>sampling model</strong> since we are modeling the random behavior of roulette with the sampling of draws from an urn. The total winnings <strong>S</strong> is simply the sum of these 1,000 independent draws:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA8LSBzYW1wbGUoYygtMSwxKSwgbiwgcmVwbGFjZSA9IFRSVUUsIHByb2I9Yyg5LzE5LCAxMC8xOSkpXG5TIDwtIHN1bShYKVxuU1xuYGBgIn0= -->
+<pre class="r"><code>X &lt;- sample(c(-1,1), n, replace = TRUE, prob=c(9/19, 10/19))
+S &lt;- sum(X)
+S</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDc4XG4ifQ== -->
+<pre><code>[1] 78</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="the-probability-distribution-of-random-variable" class="section level2">
+<h2>14.3 The probability distribution of random variable</h2>
+<p>S &lt;- random variable F(a) = Pr(S&lt;=a) &lt;- random variable’s distribution function mean(S) &lt;- expected value sd(S) &lt;- standard error</p>
+<p>binominal distribution: 이항분포(일정한 확률 p를 가진 독립시행을 n번 반복했을때의 확률분포) <strong>B(n,p), n번 중 r번 실행될 확률: P(X=r)=nCr<em>p^r</em>(1-p)^(n-r)</strong> <strong>이항분포는 discrete하다!!</strong></p>
+<p><code>pbinom</code> : 이항분포에 대하여 p(x&lt;=a) 확률 계산 pbinom(a, size=n, prob=p) #&gt; p(x&lt;=a)</p>
+<p><code>dbinom</code> : 이항분포에 대하여 P(x)의 값 dbinom(x, size, prob)</p>
+<p>S is random variable.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwXG5CIDwtIDEwMDAwXG5yb3VsZXR0ZV93aW5uaW5ncyA8LSBmdW5jdGlvbihuKXtcbiAgWCA8LSBzYW1wbGUoYygtMSwxKSwgbiwgcmVwbGFjZSA9IFRSVUUsIHByb2I9Yyg5LzE5LCAxMC8xOSkpXG4gIHN1bShYKVxufVxuUyA8LSByZXBsaWNhdGUoQiwgcm91bGV0dGVfd2lubmluZ3MobikpXG5cbmBgYCJ9 -->
+<pre class="r"><code>n &lt;- 1000
+B &lt;- 10000
+roulette_winnings &lt;- function(n){
+  X &lt;- sample(c(-1,1), n, replace = TRUE, prob=c(9/19, 10/19))
+  sum(X)
+}
+S &lt;- replicate(B, roulette_winnings(n))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now we can ask the following: in our simulations, how often did we get sums less than or equal to a?</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihTIDw9IGEpXG5gYGAifQ== -->
+<pre class="r"><code>mean(S &lt;= a)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>This will be a very good approximation of F(a) and we can easily answer the casino’s question: how likely is it that we will lose money? We can see it is quite low:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihTPDApXG5cbmBgYCJ9 -->
+<pre class="r"><code>mean(S&lt;0)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ1MlxuIn0= -->
+<pre><code>[1] 0.0452</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Specifically, in our example above, we can show that (S+n)/2 follow a binomial distribution.</p>
+<p>We can use the function <code>dbinom</code> and <code>pbinom</code> to compute the probabilities exactly. For example, to compute Pr(S&lt;0), we note that: Pr(S&lt;0) = Pr((S+n)/2 &lt; (0+n)/2) and we can use the <code>pbinom</code> to compute Pr(S&lt;=0)</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwXG5wYmlub20obi8yLCBzaXplID0gbiwgcHJvYiA9IDEwLzE5KVxuYGBgIn0= -->
+<pre class="r"><code>n &lt;- 1000
+pbinom(n/2, size = n, prob = 10/19)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDUxMDk3OTRcbiJ9 -->
+<pre><code>[1] 0.05109794</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Because this is a discete probability function, to get Pr(S&lt;0) rather than Pr(S&lt;=0), we write:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGJpbm9tKG4vMi0xLCBzaXplID0gbiwgcHJvYiA9IDEwLzE5KVxuYGBgIn0= -->
+<pre class="r"><code>pbinom(n/2-1, size = n, prob = 10/19)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ0Nzk1OTFcbiJ9 -->
+<pre><code>[1] 0.04479591</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="distributions-versus-probability-distributions" class="section level2">
+<h2>14.4 Distributions versus probability distributions</h2>
+<ol style="list-style-type: decimal">
+<li>distribution function</li>
+<li>drawing from urn with number</li>
+<li>Monte - Carloe #1. list of number? &gt; 2,3 #2. 1 is theorical and 3 don’t involve urn</li>
+</ol>
+</div>
+<div id="notation-for-random-varibles" class="section level2">
+<h2>14.5 Notation for random varibles</h2>
+<p>X(미래의 예측, random variable) &lt; x(실제 측정값)</p>
+</div>
+<div id="the-expected-value-and-standard-error" class="section level2">
+<h2>14.6 The expected value and standard error</h2>
+<p>E[X] : expected value of random value X expected value : ap + b(1-p)/ ab는 결과, p와 1-p는 각 결과의 probability</p>
+<p>expected value of a random variable defined by one draw is the average of the numbers in the urn</p>
+<p>SE[X]: standard error: size of the variation around the expected value. <strong>(number of draws)^1/2 * standard deviation of the number in the urn</strong> **standard deviation:|b-a|*(p(1-p))^1/2**</p>
+<div id="population-sd-versus-the-sample-sd" class="section level4">
+<h4>14.6.1 Population SD versus the sample SD</h4>
+<p>The standard deviation of a list <code>x</code> (below we use heights as an example) is defined as the square root of the average of the squared differences:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcImRzbGFic1wiKVxuYGBgIn0= -->
+<pre class="r"><code>install.packages(&quot;dslabs&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiSW5zdGFsbGluZyBwYWNrYWdlIGludG8g4oCYL2hvbWUvcnN0dWRpby11c2VyL1IveDg2XzY0LXBjLWxpbnV4LWdudS1saWJyYXJ5LzMuNuKAmVxuKGFzIOKAmGxpYuKAmSBpcyB1bnNwZWNpZmllZClcbmFsc28gaW5zdGFsbGluZyB0aGUgZGVwZW5kZW5jaWVzIOKAmGJhY2twb3J0c+KAmSwg4oCYZWxsaXBzaXPigJksIOKAmHplYWxsb3TigJksIOKAmGNvbG9yc3BhY2XigJksIOKAmGFzc2VydHRoYXTigJksIOKAmHV0ZjjigJksIOKAmHZjdHJz4oCZLCDigJhwbHly4oCZLCDigJhsYWJlbGluZ+KAmSwg4oCYbXVuc2VsbOKAmSwg4oCYUjbigJksIOKAmFJDb2xvckJyZXdlcuKAmSwg4oCYY2xp4oCZLCDigJhjcmF5b27igJksIOKAmGZhbnNp4oCZLCDigJhwaWxsYXLigJksIOKAmHBrZ2NvbmZpZ+KAmSwg4oCYZ3RhYmxl4oCZLCDigJhsYXp5ZXZhbOKAmSwg4oCYcmVzaGFwZTLigJksIOKAmHNjYWxlc+KAmSwg4oCYdGliYmxl4oCZLCDigJh2aXJpZGlzTGl0ZeKAmSwg4oCYd2l0aHLigJksIOKAmGdncGxvdDLigJlcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvYmFja3BvcnRzXzEuMS41LnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA1Nzg3MiBieXRlcyAoNTYgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA1NiBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9lbGxpcHNpc18wLjMuMC50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggMzQ4MjEgYnl0ZXMgKDM0IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMzQgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvemVhbGxvdF8wLjEuMC50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggNTgwMjcgYnl0ZXMgKDU2IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgNTYgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvY29sb3JzcGFjZV8xLjQtMS50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggMjUxNDc4OCBieXRlcyAoMi40IE1CKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMi40IE1CXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL2Fzc2VydHRoYXRfMC4yLjEudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDUzMzEzIGJ5dGVzICg1MiBLQilcbj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5kb3dubG9hZGVkIDUyIEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL3V0ZjhfMS4xLjQudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDIxNzQyNiBieXRlcyAoMjEyIEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMjEyIEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL3ZjdHJzXzAuMi4wLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA4Njk5NTYgYnl0ZXMgKDg0OSBLQilcbj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5kb3dubG9hZGVkIDg0OSBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9wbHlyXzEuOC40LnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCAxMDE5MDU3IGJ5dGVzICg5OTUgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA5OTUgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvbGFiZWxpbmdfMC4zLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA2MDc2NSBieXRlcyAoNTkgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA1OSBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9tdW5zZWxsXzAuNS4wLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCAyNDM4NjQgYnl0ZXMgKDIzOCBLQilcbj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5kb3dubG9hZGVkIDIzOCBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9SNl8yLjQuMC50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggNTY5NjkgYnl0ZXMgKDU1IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgNTUgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvUkNvbG9yQnJld2VyXzEuMS0yLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA1Mjg3NyBieXRlcyAoNTEgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA1MSBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9jbGlfMS4xLjAudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDE3NTc1MiBieXRlcyAoMTcxIEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMTcxIEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL2NyYXlvbl8xLjMuNC50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggNzQ4MDkyIGJ5dGVzICg3MzAgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA3MzAgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvZmFuc2lfMC40LjAudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDIzMTI5NiBieXRlcyAoMjI1IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMjI1IEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL3BpbGxhcl8xLjQuMi50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggMTc4NzExIGJ5dGVzICgxNzQgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCAxNzQgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvcGtnY29uZmlnXzIuMC4zLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCAxNzQ3NSBieXRlcyAoMTcgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCAxNyBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9ndGFibGVfMC4zLjAudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDQzNTA5NyBieXRlcyAoNDI0IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgNDI0IEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL2xhenlldmFsXzAuMi4yLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCAxNjM4NzkgYnl0ZXMgKDE2MCBLQilcbj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5kb3dubG9hZGVkIDE2MCBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi9yZXNoYXBlMl8xLjQuMy50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggNDM4MTQ2IGJ5dGVzICg0MjcgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA0MjcgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvc2NhbGVzXzEuMC4wLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA4MjkwMjUgYnl0ZXMgKDgwOSBLQilcbj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09XG5kb3dubG9hZGVkIDgwOSBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi90aWJibGVfMi4xLjMudGFyLmd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LXRhcicgbGVuZ3RoIDMyMzAwOCBieXRlcyAoMzE1IEtCKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMzE1IEtCXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL3ZpcmlkaXNMaXRlXzAuMy4wLnRhci5neidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC10YXInIGxlbmd0aCA1Njg3NyBieXRlcyAoNTUgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA1NSBLQlxuXG50cnlpbmcgVVJMICdodHRwOi8vcGFja2FnZS1wcm94eS9zcmMvY29udHJpYi93aXRocl8yLjEuMi50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggMTUzMzIyIGJ5dGVzICgxNDkgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCAxNDkgS0JcblxudHJ5aW5nIFVSTCAnaHR0cDovL3BhY2thZ2UtcHJveHkvc3JjL2NvbnRyaWIvZ2dwbG90Ml8zLjIuMS50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggMzk4MDIwOCBieXRlcyAoMy44IE1CKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgMy44IE1CXG5cbnRyeWluZyBVUkwgJ2h0dHA6Ly9wYWNrYWdlLXByb3h5L3NyYy9jb250cmliL2RzbGFic18wLjcuMS50YXIuZ3onXG5Db250ZW50IHR5cGUgJ2FwcGxpY2F0aW9uL3gtdGFyJyBsZW5ndGggNDY4MjY3OCBieXRlcyAoNC41IE1CKVxuPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT1cbmRvd25sb2FkZWQgNC41IE1CXG5cbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmGJhY2twb3J0c+KAmSAuLi5cbiogRE9ORSAoYmFja3BvcnRzKVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYZWxsaXBzaXPigJkgLi4uXG4qIERPTkUgKGVsbGlwc2lzKVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYemVhbGxvdOKAmSAuLi5cbiogRE9ORSAoemVhbGxvdClcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmGNvbG9yc3BhY2XigJkgLi4uXG4qIERPTkUgKGNvbG9yc3BhY2UpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhhc3NlcnR0aGF04oCZIC4uLlxuKiBET05FIChhc3NlcnR0aGF0KVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYdXRmOOKAmSAuLi5cbiogRE9ORSAodXRmOClcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHBseXLigJkgLi4uXG4qIERPTkUgKHBseXIpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhsYWJlbGluZ+KAmSAuLi5cbiogRE9ORSAobGFiZWxpbmcpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhSNuKAmSAuLi5cbiogRE9ORSAoUjYpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhSQ29sb3JCcmV3ZXLigJkgLi4uXG4qIERPTkUgKFJDb2xvckJyZXdlcilcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmGNyYXlvbuKAmSAuLi5cbiogRE9ORSAoY3JheW9uKVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYZmFuc2nigJkgLi4uXG4qIERPTkUgKGZhbnNpKVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYcGtnY29uZmln4oCZIC4uLlxuKiBET05FIChwa2djb25maWcpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhndGFibGXigJkgLi4uXG4qIERPTkUgKGd0YWJsZSlcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmGxhenlldmFs4oCZIC4uLlxuKiBET05FIChsYXp5ZXZhbClcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHZpcmlkaXNMaXRl4oCZIC4uLlxuKiBET05FICh2aXJpZGlzTGl0ZSlcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHdpdGhy4oCZIC4uLlxuKiBET05FICh3aXRocilcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHZjdHJz4oCZIC4uLlxuKiBET05FICh2Y3RycylcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmG11bnNlbGzigJkgLi4uXG4qIERPTkUgKG11bnNlbGwpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhjbGnigJkgLi4uXG4qIERPTkUgKGNsaSlcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHJlc2hhcGUy4oCZIC4uLlxuKiBET05FIChyZXNoYXBlMilcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmHBpbGxhcuKAmSAuLi5cbiogRE9ORSAocGlsbGFyKVxuKiBpbnN0YWxsaW5nICpiaW5hcnkqIHBhY2thZ2Ug4oCYc2NhbGVz4oCZIC4uLlxuKiBET05FIChzY2FsZXMpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJh0aWJibGXigJkgLi4uXG4qIERPTkUgKHRpYmJsZSlcbiogaW5zdGFsbGluZyAqYmluYXJ5KiBwYWNrYWdlIOKAmGdncGxvdDLigJkgLi4uXG4qIERPTkUgKGdncGxvdDIpXG4qIGluc3RhbGxpbmcgKmJpbmFyeSogcGFja2FnZSDigJhkc2xhYnPigJkgLi4uXG4qIERPTkUgKGRzbGFicylcblxuVGhlIGRvd25sb2FkZWQgc291cmNlIHBhY2thZ2VzIGFyZSBpblxuXHTigJgvdG1wL1J0bXBmVmJEWXQvZG93bmxvYWRlZF9wYWNrYWdlc+KAmVxuIn0= -->
+<pre><code>Installing package into ‘/home/rstudio-user/R/x86_64-pc-linux-gnu-library/3.6’
+(as ‘lib’ is unspecified)
+also installing the dependencies ‘backports’, ‘ellipsis’, ‘zeallot’, ‘colorspace’, ‘assertthat’, ‘utf8’, ‘vctrs’, ‘plyr’, ‘labeling’, ‘munsell’, ‘R6’, ‘RColorBrewer’, ‘cli’, ‘crayon’, ‘fansi’, ‘pillar’, ‘pkgconfig’, ‘gtable’, ‘lazyeval’, ‘reshape2’, ‘scales’, ‘tibble’, ‘viridisLite’, ‘withr’, ‘ggplot2’
+
+trying URL 'http://package-proxy/src/contrib/backports_1.1.5.tar.gz'
+Content type 'application/x-tar' length 57872 bytes (56 KB)
+==================================================
+downloaded 56 KB
+
+trying URL 'http://package-proxy/src/contrib/ellipsis_0.3.0.tar.gz'
+Content type 'application/x-tar' length 34821 bytes (34 KB)
+==================================================
+downloaded 34 KB
+
+trying URL 'http://package-proxy/src/contrib/zeallot_0.1.0.tar.gz'
+Content type 'application/x-tar' length 58027 bytes (56 KB)
+==================================================
+downloaded 56 KB
+
+trying URL 'http://package-proxy/src/contrib/colorspace_1.4-1.tar.gz'
+Content type 'application/x-tar' length 2514788 bytes (2.4 MB)
+==================================================
+downloaded 2.4 MB
+
+trying URL 'http://package-proxy/src/contrib/assertthat_0.2.1.tar.gz'
+Content type 'application/x-tar' length 53313 bytes (52 KB)
+==================================================
+downloaded 52 KB
+
+trying URL 'http://package-proxy/src/contrib/utf8_1.1.4.tar.gz'
+Content type 'application/x-tar' length 217426 bytes (212 KB)
+==================================================
+downloaded 212 KB
+
+trying URL 'http://package-proxy/src/contrib/vctrs_0.2.0.tar.gz'
+Content type 'application/x-tar' length 869956 bytes (849 KB)
+==================================================
+downloaded 849 KB
+
+trying URL 'http://package-proxy/src/contrib/plyr_1.8.4.tar.gz'
+Content type 'application/x-tar' length 1019057 bytes (995 KB)
+==================================================
+downloaded 995 KB
+
+trying URL 'http://package-proxy/src/contrib/labeling_0.3.tar.gz'
+Content type 'application/x-tar' length 60765 bytes (59 KB)
+==================================================
+downloaded 59 KB
+
+trying URL 'http://package-proxy/src/contrib/munsell_0.5.0.tar.gz'
+Content type 'application/x-tar' length 243864 bytes (238 KB)
+==================================================
+downloaded 238 KB
+
+trying URL 'http://package-proxy/src/contrib/R6_2.4.0.tar.gz'
+Content type 'application/x-tar' length 56969 bytes (55 KB)
+==================================================
+downloaded 55 KB
+
+trying URL 'http://package-proxy/src/contrib/RColorBrewer_1.1-2.tar.gz'
+Content type 'application/x-tar' length 52877 bytes (51 KB)
+==================================================
+downloaded 51 KB
+
+trying URL 'http://package-proxy/src/contrib/cli_1.1.0.tar.gz'
+Content type 'application/x-tar' length 175752 bytes (171 KB)
+==================================================
+downloaded 171 KB
+
+trying URL 'http://package-proxy/src/contrib/crayon_1.3.4.tar.gz'
+Content type 'application/x-tar' length 748092 bytes (730 KB)
+==================================================
+downloaded 730 KB
+
+trying URL 'http://package-proxy/src/contrib/fansi_0.4.0.tar.gz'
+Content type 'application/x-tar' length 231296 bytes (225 KB)
+==================================================
+downloaded 225 KB
+
+trying URL 'http://package-proxy/src/contrib/pillar_1.4.2.tar.gz'
+Content type 'application/x-tar' length 178711 bytes (174 KB)
+==================================================
+downloaded 174 KB
+
+trying URL 'http://package-proxy/src/contrib/pkgconfig_2.0.3.tar.gz'
+Content type 'application/x-tar' length 17475 bytes (17 KB)
+==================================================
+downloaded 17 KB
+
+trying URL 'http://package-proxy/src/contrib/gtable_0.3.0.tar.gz'
+Content type 'application/x-tar' length 435097 bytes (424 KB)
+==================================================
+downloaded 424 KB
+
+trying URL 'http://package-proxy/src/contrib/lazyeval_0.2.2.tar.gz'
+Content type 'application/x-tar' length 163879 bytes (160 KB)
+==================================================
+downloaded 160 KB
+
+trying URL 'http://package-proxy/src/contrib/reshape2_1.4.3.tar.gz'
+Content type 'application/x-tar' length 438146 bytes (427 KB)
+==================================================
+downloaded 427 KB
+
+trying URL 'http://package-proxy/src/contrib/scales_1.0.0.tar.gz'
+Content type 'application/x-tar' length 829025 bytes (809 KB)
+==================================================
+downloaded 809 KB
+
+trying URL 'http://package-proxy/src/contrib/tibble_2.1.3.tar.gz'
+Content type 'application/x-tar' length 323008 bytes (315 KB)
+==================================================
+downloaded 315 KB
+
+trying URL 'http://package-proxy/src/contrib/viridisLite_0.3.0.tar.gz'
+Content type 'application/x-tar' length 56877 bytes (55 KB)
+==================================================
+downloaded 55 KB
+
+trying URL 'http://package-proxy/src/contrib/withr_2.1.2.tar.gz'
+Content type 'application/x-tar' length 153322 bytes (149 KB)
+==================================================
+downloaded 149 KB
+
+trying URL 'http://package-proxy/src/contrib/ggplot2_3.2.1.tar.gz'
+Content type 'application/x-tar' length 3980208 bytes (3.8 MB)
+==================================================
+downloaded 3.8 MB
+
+trying URL 'http://package-proxy/src/contrib/dslabs_0.7.1.tar.gz'
+Content type 'application/x-tar' length 4682678 bytes (4.5 MB)
+==================================================
+downloaded 4.5 MB
+
+* installing *binary* package ‘backports’ ...
+* DONE (backports)
+* installing *binary* package ‘ellipsis’ ...
+* DONE (ellipsis)
+* installing *binary* package ‘zeallot’ ...
+* DONE (zeallot)
+* installing *binary* package ‘colorspace’ ...
+* DONE (colorspace)
+* installing *binary* package ‘assertthat’ ...
+* DONE (assertthat)
+* installing *binary* package ‘utf8’ ...
+* DONE (utf8)
+* installing *binary* package ‘plyr’ ...
+* DONE (plyr)
+* installing *binary* package ‘labeling’ ...
+* DONE (labeling)
+* installing *binary* package ‘R6’ ...
+* DONE (R6)
+* installing *binary* package ‘RColorBrewer’ ...
+* DONE (RColorBrewer)
+* installing *binary* package ‘crayon’ ...
+* DONE (crayon)
+* installing *binary* package ‘fansi’ ...
+* DONE (fansi)
+* installing *binary* package ‘pkgconfig’ ...
+* DONE (pkgconfig)
+* installing *binary* package ‘gtable’ ...
+* DONE (gtable)
+* installing *binary* package ‘lazyeval’ ...
+* DONE (lazyeval)
+* installing *binary* package ‘viridisLite’ ...
+* DONE (viridisLite)
+* installing *binary* package ‘withr’ ...
+* DONE (withr)
+* installing *binary* package ‘vctrs’ ...
+* DONE (vctrs)
+* installing *binary* package ‘munsell’ ...
+* DONE (munsell)
+* installing *binary* package ‘cli’ ...
+* DONE (cli)
+* installing *binary* package ‘reshape2’ ...
+* DONE (reshape2)
+* installing *binary* package ‘pillar’ ...
+* DONE (pillar)
+* installing *binary* package ‘scales’ ...
+* DONE (scales)
+* installing *binary* package ‘tibble’ ...
+* DONE (tibble)
+* installing *binary* package ‘ggplot2’ ...
+* DONE (ggplot2)
+* installing *binary* package ‘dslabs’ ...
+* DONE (dslabs)
+
+The downloaded source packages are in
+    ‘/tmp/RtmpfVbDYt/downloaded_packages’</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkc2xhYnMpXG54IDwtIGhlaWdodHMkaGVpZ2h0XG5tIDwtIG1lYW4oeClcbnMgPC0gc3FydChtZWFuKCh4LW0pXjIpKVxuYGBgIn0= -->
+<pre class="r"><code>library(dslabs)
+x &lt;- heights$height
+m &lt;- mean(x)
+s &lt;- sqrt(mean((x-m)^2))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>However, be aware that the sd function returns a slightly different result:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWRlbnRpY2FsKHMsIHNkKHgpKVxuYGBgIn0= -->
+<pre class="r"><code>identical(s, sd(x))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIEZBTFNFXG4ifQ== -->
+<pre><code>[1] FALSE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucyAtIHNkKHgpXG5gYGAifQ== -->
+<pre class="r"><code>s - sd(x)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjAwMTk0MjY2MVxuIn0= -->
+<pre><code>[1] -0.001942661</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>(x-m)^2의 평균 구할 때 원래대로라면 전체합을 n으로 나눠야되는데 sd(x)는 n-1로 나눔. 그래서 sd(x)대신 정석을 써야되는데 n의 값이 충분히 크면 그게 그거므로 sd(x)써도 됨.</p>
+</div>
+</div>
+<div id="central-limit-theorem" class="section level2">
+<h2>14.7 Central Limit Theorem</h2>
+<p>CLT : number or drawn의 값이 크면 probability distribution of the sum of the independent draws is approximately normal -&gt; Monte Carlo대신 E[X]와 SE[X]로 값 계산 가능</p>
+<p>We previously ran this Monte Carlo simulation:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwXG5CIDwtIDEwMDAwXG5yb3VsZXR0ZV93aW5uaW5ncyA8LSBmdW5jdGlvbihuKXtcbiAgWCA8LSBzYW1wbGUoYygtMSwxKSwgbiwgcmVwbGFjZSA9IFRSVUUsIHByb2I9Yyg5LzE5LCAxMC8xOSkpXG4gIHN1bShYKVxufVxuUyA8LSByZXBsaWNhdGUoQiwgcm91bGV0dGVfd2lubmluZ3MobikpXG5gYGAifQ== -->
+<pre class="r"><code>n &lt;- 1000
+B &lt;- 10000
+roulette_winnings &lt;- function(n){
+  X &lt;- sample(c(-1,1), n, replace = TRUE, prob=c(9/19, 10/19))
+  sum(X)
+}
+S &lt;- replicate(B, roulette_winnings(n))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The Central Limit Theorem (CLT) tells us that the sum S is approximated by a normal distribution. Using the formulas above, we know that the expected value and standard error are:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiAqICgyMC0xOCkvMzggXG5gYGAifQ== -->
+<pre class="r"><code>n * (20-18)/38 </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUyLjYzMTU4XG4ifQ== -->
+<pre><code>[1] 52.63158</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3FydChuKSAqIDIgKiBzcXJ0KDkwKS8xOSBcbmBgYCJ9 -->
+<pre class="r"><code>sqrt(n) * 2 * sqrt(90)/19 </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMxLjU3ODk1XG4ifQ== -->
+<pre><code>[1] 31.57895</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The theoretical values above match those obtained with the Monte Carlo simulation:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihTKVxuYGBgIn0= -->
+<pre class="r"><code>mean(S)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDUyLjgwMDRcbiJ9 -->
+<pre><code>[1] 52.8004</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2QoUylcbmBgYCJ9 -->
+<pre class="r"><code>sd(S)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMxLjkyMDE3XG4ifQ== -->
+<pre><code>[1] 31.92017</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Using the CLT, we can skip the Monte Carlo simulation and instead compute the probability of the casino losing money using this approximation, which is also in very good agreement with our Monte Carlo result:</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXUgPC0gbiAqICgyMC0xOCkvMzhcbnNlIDwtICBzcXJ0KG4pICogMiAqIHNxcnQoOTApLzE5IFxucG5vcm0oMCwgbXUsIHNlKVxuYGBgIn0= -->
+<pre class="r"><code>mu &lt;- n * (20-18)/38
+se &lt;-  sqrt(n) * 2 * sqrt(90)/19 
+pnorm(0, mu, se)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ3NzkwMzVcbiJ9 -->
+<pre><code>[1] 0.04779035</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihTIDwgMClcbmBgYCJ9 -->
+<pre class="r"><code>mean(S &lt; 0)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ0MlxuIn0= -->
+<pre><code>[1] 0.0442</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="how-large-is-large-in-the-central-limit-theorem" class="section level4">
+<h4>14.7.1 How large is large in the Central Limit THeorem?</h4>
+<p>보통 30 근데 success의 probability가 매우 낮을때는 아무리 숫자가 커도 normal distribution과 거리가 멈 오히려 <strong>possion distribution</strong>이 더욱 적절</p>
+<p><code>dpois</code>, <code>ppois</code>, <code>rpois</code></p>
+</div>
+</div>
+<div id="statistical-properties-of-averages" class="section level2">
+<h2>14.8 Statistical properties of averages</h2>
+<ol style="list-style-type: decimal">
+<li><p>The expected value of the sum of random variables is the sum of each random variable’s expected value. E[X1 + X2 + X3 …] = E[X1] + E[X2].. If the X are independent draws from the urn, then they all have the same expected value. Let’s call it μ and thus: E[X1 + X2 .. + Xn] = nμ</p></li>
+<li><p>The expected value of a non-random constant times a random variable is the non-random constant times the expected value of a random variable. E[aX] = a * E[X] E[(X1 + X2 .. + Xn)/n] = E[(X1 + X2 .. + Xn)]/n = nμ/n = μ</p></li>
+<li><p>SE[X1 + X2 + .. +Xn] = (SE[X1]^2 + ..SE[Xn]<sup>2)</sup>1/2</p></li>
+<li><p>SE[aX] = a*SE[X]</p></li>
+<li><p>X is normally distribiuted random variable aX + B is normally distributed random variable, that multiplying by a then shifting the center by b.</p></li>
+</ol>
+</div>
+<div id="law-of-large-numbers" class="section level2">
+<h2>14.9 Law of large numbers</h2>
+<p>n이 커지면 standard error는 0에 가까워지고 average of draw는 urn의 average에 가까워짐.</p>
+<div id="misinterpreting-law-of-average" class="section level4">
+<h4>14.9.1 Misinterpreting law of average</h4>
+<p>law of average는 n의 숫자가 클때만 적용되고 각각의 시행은 독립이므로 앞의 결과에 영향을 받지 않는다.</p>
+</div>
+</div>
+<div id="exercises" class="section level2">
+<h2>14.10 Exercises</h2>
+<ol style="list-style-type: decimal">
+<li>In American Roulette you can also bet on green. There are 18 reds, 18 blacks and 2 greens (0 and 00). What are the chances the green comes out?</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMi8oMTgrMTgrMilcblxuYGBgIn0= -->
+<pre class="r"><code>2/(18+18+2)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDUyNjMxNThcbiJ9 -->
+<pre><code>[1] 0.05263158</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="2" style="list-style-type: decimal">
+<li>The payout for winning on green is $17 dollars. This means that if you bet a dollar and it lands on green, you get $17. Create a sampling model using sample to simulate the random variable X for your winnings. Hint: see the example below for how it should look like when betting on red.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuWCA8LSBzYW1wbGUoYygxNywgLTEpLCBwcm9iID0gYygyLzM4LDM2LzM4KSlcbmBgYCJ9 -->
+<pre class="r"><code>X &lt;- sample(c(17, -1), prob = c(2/38,36/38))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="3" style="list-style-type: decimal">
+<li>Compute the expected value of X</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMTcqMi8zOCAtMzYvMzhcbmBgYCJ9 -->
+<pre class="r"><code>17*2/38 -36/38</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0wLjA1MjYzMTU4XG4ifQ== -->
+<pre><code>[1] -0.05263158</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="4" style="list-style-type: decimal">
+<li>Compute the standard error of X</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMTgqc3FydCgoMi8zOCkqKDM2LzM4KSlcbmBgYCJ9 -->
+<pre class="r"><code>18*sqrt((2/38)*(36/38))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQuMDE5MzQ0XG4ifQ== -->
+<pre><code>[1] 4.019344</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="5" style="list-style-type: decimal">
+<li>Now create a random variable S that is the sum of your winnings after betting on green 1000 times. Hint: change the argument <code>size</code> and <code>replace</code> in your answer to question 2. Start your code by setting the seed to 1 with <code>set.seed(1)</code>.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMSlcbnNhbXBsZShjKDE3LCAtMSksIHByb2IgPSBjKDIvMzgsMzYvMzgpLCAxMDAwLCByZXBsYWNlID0gVFJVRSlcbmBgYCJ9 -->
+<pre class="r"><code>set.seed(1)
+sample(c(17, -1), prob = c(2/38,36/38), 1000, replace = TRUE)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgWzFdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gIFsxNV0gLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiAgWzI5XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuICBbNDNdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gIFs1N10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiAgWzcxXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMVxuICBbODVdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gIFs5OV0gLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgLTEgMTcgLTFcbiBbMTEzXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMVxuIFsxMjddIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIDE3IC0xXG4gWzE0MV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbMTU1XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFsxNjldIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzE4M10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbMTk3XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFsyMTFdIDE3IC0xIC0xIDE3IC0xIC0xIC0xIDE3IDE3IC0xIC0xIC0xIC0xIC0xXG4gWzIyNV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbMjM5XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFsyNTNdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzI2N10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbMjgxXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMVxuIFsyOTVdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIDE3IC0xIC0xXG4gWzMwOV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTFcbiBbMzIzXSAtMSAxNyAtMSAxNyAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMVxuIFszMzddIC0xIC0xIC0xIDE3IDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzM1MV0gLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbMzY1XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFszNzldIC0xIC0xIC0xIC0xIC0xIDE3IC0xIC0xIC0xIC0xIC0xIDE3IC0xIC0xXG4gWzM5M10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTFcbiBbNDA3XSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs0MjFdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzQzNV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbNDQ5XSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMVxuIFs0NjNdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIDE3IC0xIC0xIC0xIC0xXG4gWzQ3N10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbNDkxXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs1MDVdIC0xIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzUxOV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgMTcgMTcgLTEgLTFcbiBbNTMzXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMVxuIFs1NDddIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzU2MV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTFcbiBbNTc1XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMSAtMVxuIFs1ODldIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzYwM10gLTEgLTEgMTcgMTcgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbNjE3XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs2MzFdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzY0NV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbNjU5XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs2NzNdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzY4N10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgMTcgLTFcbiBbNzAxXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs3MTVdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzcyOV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbNzQzXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs3NTddIC0xIC0xIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzc3MV0gLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTFcbiBbNzg1XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs3OTldIC0xIC0xIC0xIC0xIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzgxM10gLTEgMTcgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbODI3XSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMVxuIFs4NDFdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIDE3XG4gWzg1NV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbODY5XSAtMSAtMSAtMSAxNyAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAtMSAtMVxuIFs4ODNdIDE3IC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzg5N10gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbOTExXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAxNyAxNyAtMVxuIFs5MjVdIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xIC0xXG4gWzkzOV0gLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTEgLTFcbiBbOTUzXSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMSAtMVxuIFs5NjddIC0xIC0xIDE3IC0xIDE3IC0xIC0xIDE3IC0xIC0xIC0xIC0xIC0xIC0xXG4gWzk4MV0gLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTEgMTcgLTEgLTEgLTEgLTEgLTFcbiBbOTk1XSAtMSAtMSAtMSAtMSAtMSAtMVxuIn0= -->
+<pre><code>   [1] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [15] -1 -1 -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [29] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [43] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [57] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [71] -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+  [85] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  [99] -1 -1 -1 -1 -1 17 -1 -1 -1 -1 -1 -1 17 -1
+ [113] -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1 -1
+ [127] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1
+ [141] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [155] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [169] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [183] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [197] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [211] 17 -1 -1 17 -1 -1 -1 17 17 -1 -1 -1 -1 -1
+ [225] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [239] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [253] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [267] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [281] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1
+ [295] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1
+ [309] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1
+ [323] -1 17 -1 17 -1 -1 -1 -1 17 -1 -1 -1 -1 -1
+ [337] -1 -1 -1 17 17 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [351] -1 -1 -1 -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [365] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [379] -1 -1 -1 -1 -1 17 -1 -1 -1 -1 -1 17 -1 -1
+ [393] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1
+ [407] -1 -1 -1 -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [421] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [435] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [449] -1 -1 17 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+ [463] -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+ [477] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [491] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [505] -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [519] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 17 -1 -1
+ [533] -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+ [547] 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [561] -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+ [575] -1 -1 -1 -1 -1 -1 -1 17 -1 -1 -1 -1 -1 -1
+ [589] 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [603] -1 -1 17 17 -1 -1 17 -1 -1 -1 -1 -1 -1 -1
+ [617] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [631] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [645] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [659] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [673] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [687] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1
+ [701] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [715] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [729] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [743] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [757] -1 -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [771] -1 -1 -1 17 -1 -1 -1 -1 -1 17 -1 -1 -1 -1
+ [785] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [799] -1 -1 -1 -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [813] -1 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [827] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 -1
+ [841] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17
+ [855] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [869] -1 -1 -1 17 -1 -1 -1 -1 -1 -1 -1 17 -1 -1
+ [883] 17 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [897] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [911] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 17 17 -1
+ [925] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [939] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [953] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+ [967] -1 -1 17 -1 17 -1 -1 17 -1 -1 -1 -1 -1 -1
+ [981] -1 -1 17 -1 -1 -1 -1 -1 17 -1 -1 -1 -1 -1
+ [995] -1 -1 -1 -1 -1 -1</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMSlcbnJlc3VsdHMgPC0gc2FtcGxlKGMoMTcsIC0xKSwgcHJvYiA9IGMoMi8zOCwzNi8zOCksIDEwMDAsIHJlcGxhY2UgPSBUUlVFKVxuUyA8LSBzdW0ocmVzdWx0cylcbmBgYCJ9 -->
+<pre class="r"><code>set.seed(1)
+results &lt;- sample(c(17, -1), prob = c(2/38,36/38), 1000, replace = TRUE)
+S &lt;- sum(results)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="6" style="list-style-type: decimal">
+<li>What is the expected value of S?</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMTAwMCooKDE3KjIvMzgpLSgzNi8zOCkpXG5gYGAifQ== -->
+<pre class="r"><code>1000*((17*2/38)-(36/38))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC01Mi42MzE1OFxuIn0= -->
+<pre><code>[1] -52.63158</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="7" style="list-style-type: decimal">
+<li>What is the standard error of S?</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3FydCgxMDAwKSoxOCpzcXJ0KCgyLzM4KSooMzYvMzgpKVxuYGBgIn0= -->
+<pre class="r"><code>sqrt(1000)*18*sqrt((2/38)*(36/38))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDEyNy4xMDI4XG4ifQ== -->
+<pre><code>[1] 127.1028</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="8" style="list-style-type: decimal">
+<li>What is the probability that you end up winning money? Hint: use the CLT</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuMSAtIHBub3JtKDAsIC01Mi42MywgMTI3LjEwKVxuYGBgIn0= -->
+<pre class="r"><code>1 - pnorm(0, -52.63, 127.10)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMzM5NDA2NVxuIn0= -->
+<pre><code>[1] 0.3394065</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="9" style="list-style-type: decimal">
+<li>Create a Monte Carlo simulation that generates 1,000 outcomes of S. Compute the average and standard deviation of the resulting list to confirm the results of 6 and 7. Start your code by setting the seed to 1 with set.seed(1)</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQiA8LSAxMDAwXG5uIDwtIDEwMDAgIFxuXG5yZXN1bHRzIDwtIHJlcGxpY2F0ZShCLCBzdW0oc2FtcGxlKGMoMTcsIC0xKSwgbiwgcHJvYiA9IGMoMi8zOCwzNi8zOCksIHJlcGxhY2UgPSBUUlVFKSkpXG5gYGAifQ== -->
+<pre class="r"><code>B &lt;- 1000
+n &lt;- 1000  
+
+results &lt;- replicate(B, sum(sample(c(17, -1), n, prob = c(2/38,36/38), replace = TRUE)))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="10" style="list-style-type: decimal">
+<li>Now check your answer to 8 using the Monte Carlo result.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihyZXN1bHRzPjApXG5cbmBgYCJ9 -->
+<pre class="r"><code>mean(results&gt;0)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMzRcbiJ9 -->
+<pre><code>[1] 0.34</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="11" style="list-style-type: decimal">
+<li>The Monte Carlo result and the CLT approximation are close, but not that close. What could account for this?</li>
+</ol>
+<p><strong>C. the difference is within rounding error.</strong></p>
+<ol start="12" style="list-style-type: decimal">
+<li>Now create a random variable Y that is your average winnings per beet after playing off your winnings after betting on green 1000 times.</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVwbGljYXRlKDEwMDAsIG15X2Z1bmN0aW9uKG4pKVxuXG5gYGAifQ== -->
+<pre class="r"><code>replicate(1000, my_function(n))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgWzFdIDAuMDQ4IDAuMDQ3IDAuMDYxIDAuMDQ2IDAuMDU1IDAuMDUwIDAuMDY1XG4gICBbOF0gMC4wNTAgMC4wNDUgMC4wNjEgMC4wNjMgMC4wNTYgMC4wNTcgMC4wNTRcbiAgWzE1XSAwLjA2MCAwLjA1NCAwLjA1NCAwLjA0NyAwLjA1MiAwLjA0NCAwLjAzOFxuICBbMjJdIDAuMDU3IDAuMDU3IDAuMDY0IDAuMDUwIDAuMDQ5IDAuMDY4IDAuMDQ5XG4gIFsyOV0gMC4wNDQgMC4wNTYgMC4wMzkgMC4wNTMgMC4wNTAgMC4wNjkgMC4wNDhcbiAgWzM2XSAwLjA1MyAwLjA0NyAwLjA0OSAwLjA2MCAwLjA0NyAwLjA2MyAwLjA2NFxuICBbNDNdIDAuMDY1IDAuMDUyIDAuMDU5IDAuMDUzIDAuMDU4IDAuMDQ3IDAuMDU5XG4gIFs1MF0gMC4wNTMgMC4wNTYgMC4wNjQgMC4wNTAgMC4wNTIgMC4wNDEgMC4wNTlcbiAgWzU3XSAwLjA2MyAwLjA2MCAwLjA0NiAwLjA1MiAwLjA2MSAwLjA0NiAwLjA1NFxuICBbNjRdIDAuMDU2IDAuMDU3IDAuMDQ0IDAuMDQ1IDAuMDQ1IDAuMDQ4IDAuMDUyXG4gIFs3MV0gMC4wNTYgMC4wNTkgMC4wNDEgMC4wNTUgMC4wNjAgMC4wNTUgMC4wNDZcbiAgWzc4XSAwLjA0NiAwLjA1OSAwLjA1NyAwLjA1MyAwLjA1NSAwLjA2MCAwLjA1MlxuICBbODVdIDAuMDUwIDAuMDQ1IDAuMDQ3IDAuMDQ4IDAuMDU0IDAuMDQ0IDAuMDQ0XG4gIFs5Ml0gMC4wNTIgMC4wNTQgMC4wNDMgMC4wNDYgMC4wNTggMC4wNjEgMC4wNDFcbiAgWzk5XSAwLjA1MCAwLjA0NiAwLjA1OCAwLjA1NyAwLjA0NiAwLjA1OCAwLjA0N1xuIFsxMDZdIDAuMDYxIDAuMDQ5IDAuMDUwIDAuMDQ4IDAuMDU0IDAuMDQ4IDAuMDQ5XG4gWzExM10gMC4wNTggMC4wNTUgMC4wNTAgMC4wNDYgMC4wNDUgMC4wNDkgMC4wNTBcbiBbMTIwXSAwLjA1OSAwLjA2MiAwLjA0NCAwLjA0MSAwLjA0NyAwLjA2MCAwLjA0NFxuIFsxMjddIDAuMDY3IDAuMDM2IDAuMDQ5IDAuMDY1IDAuMDUxIDAuMDU2IDAuMDQ4XG4gWzEzNF0gMC4wNjEgMC4wNTQgMC4wNjUgMC4wNjcgMC4wNTQgMC4wNzAgMC4wNDRcbiBbMTQxXSAwLjA1NCAwLjA1NCAwLjA1NyAwLjA1MSAwLjA0NCAwLjA0MiAwLjA1NFxuIFsxNDhdIDAuMDU2IDAuMDQ4IDAuMDYzIDAuMDY2IDAuMDQ3IDAuMDUyIDAuMDM4XG4gWzE1NV0gMC4wNTIgMC4wNTQgMC4wNjIgMC4wNTcgMC4wNTMgMC4wNTggMC4wNTFcbiBbMTYyXSAwLjA0MCAwLjA1MSAwLjA1NyAwLjA0MiAwLjA1MiAwLjA2MSAwLjA1MVxuIFsxNjldIDAuMDczIDAuMDU0IDAuMDU4IDAuMDUwIDAuMDQzIDAuMDY0IDAuMDYzXG4gWzE3Nl0gMC4wNDcgMC4wNjAgMC4wNTMgMC4wNDEgMC4wNTAgMC4wNDcgMC4wNTJcbiBbMTgzXSAwLjA1MiAwLjA1OSAwLjA0OSAwLjAzOCAwLjA2NCAwLjA1NyAwLjA1NFxuIFsxOTBdIDAuMDYxIDAuMDUxIDAuMDM2IDAuMDUzIDAuMDYwIDAuMDYxIDAuMDYzXG4gWzE5N10gMC4wNTEgMC4wNjEgMC4wNjMgMC4wNTUgMC4wNTcgMC4wMzYgMC4wNTdcbiBbMjA0XSAwLjA1OSAwLjA0OSAwLjA0OSAwLjA0OCAwLjA0NiAwLjA1OCAwLjA0NlxuIFsyMTFdIDAuMDU1IDAuMDU4IDAuMDM3IDAuMDUyIDAuMDUwIDAuMDUyIDAuMDUzXG4gWzIxOF0gMC4wNDMgMC4wNTIgMC4wNDkgMC4wNjkgMC4wNTkgMC4wNTQgMC4wNDhcbiBbMjI1XSAwLjA1NSAwLjA1MSAwLjAzNiAwLjA1NCAwLjA1MSAwLjA1MiAwLjA0OVxuIFsyMzJdIDAuMDQ4IDAuMDUyIDAuMDUwIDAuMDUwIDAuMDQ2IDAuMDQxIDAuMDU2XG4gWzIzOV0gMC4wNTAgMC4wNTUgMC4wNjMgMC4wNDAgMC4wNTAgMC4wNTYgMC4wNjRcbiBbMjQ2XSAwLjA1MiAwLjA2MSAwLjA3MyAwLjA1NyAwLjA0OSAwLjA0NSAwLjA1NlxuIFsyNTNdIDAuMDYxIDAuMDQ5IDAuMDU3IDAuMDM4IDAuMDY0IDAuMDQ1IDAuMDQyXG4gWzI2MF0gMC4wNDggMC4wNTcgMC4wNDEgMC4wNTUgMC4wNjkgMC4wNTIgMC4wNjBcbiBbMjY3XSAwLjA1MyAwLjA1MyAwLjA1NiAwLjA1MSAwLjA2MCAwLjA0OSAwLjA1NVxuIFsyNzRdIDAuMDU1IDAuMDYxIDAuMDQ3IDAuMDU0IDAuMDU3IDAuMDQzIDAuMDU4XG4gWzI4MV0gMC4wNTUgMC4wNTIgMC4wNTcgMC4wNTkgMC4wNTYgMC4wNzIgMC4wNDVcbiBbMjg4XSAwLjA0NCAwLjA1MiAwLjA1NSAwLjA1MCAwLjA0NSAwLjA0OCAwLjA1MVxuIFsyOTVdIDAuMDUzIDAuMDUwIDAuMDUwIDAuMDUzIDAuMDU0IDAuMDUyIDAuMDY1XG4gWzMwMl0gMC4wNDggMC4wNjggMC4wNTYgMC4wNDMgMC4wNTAgMC4wMzcgMC4wNDlcbiBbMzA5XSAwLjA0OSAwLjA2MSAwLjA1MiAwLjA2MyAwLjA2MyAwLjA1NiAwLjA1NFxuIFszMTZdIDAuMDQwIDAuMDU5IDAuMDUwIDAuMDUzIDAuMDUxIDAuMDU0IDAuMDQ3XG4gWzMyM10gMC4wMzUgMC4wNTMgMC4wNTIgMC4wNjMgMC4wNDcgMC4wNDIgMC4wNjJcbiBbMzMwXSAwLjA1NCAwLjA0OCAwLjA0OCAwLjA1MCAwLjA2MSAwLjA1MiAwLjA1NVxuIFszMzddIDAuMDQ1IDAuMDUwIDAuMDM5IDAuMDU2IDAuMDQ2IDAuMDU4IDAuMDU1XG4gWzM0NF0gMC4wNjYgMC4wNTAgMC4wNTIgMC4wNjQgMC4wNTcgMC4wNTggMC4wNjdcbiBbMzUxXSAwLjA0NiAwLjA2NCAwLjA1MyAwLjA0OSAwLjA2MCAwLjA1OSAwLjA1NVxuIFszNThdIDAuMDUzIDAuMDQ1IDAuMDUyIDAuMDU0IDAuMDYwIDAuMDU3IDAuMDQ3XG4gWzM2NV0gMC4wNTcgMC4wNTEgMC4wNDIgMC4wNjIgMC4wNTUgMC4wNjAgMC4wNThcbiBbMzcyXSAwLjA1MiAwLjA2MyAwLjA2MiAwLjA0MyAwLjA1OSAwLjA1OCAwLjA2NlxuIFszNzldIDAuMDYxIDAuMDQ5IDAuMDUyIDAuMDUwIDAuMDUwIDAuMDUwIDAuMDQ3XG4gWzM4Nl0gMC4wNDMgMC4wNTIgMC4wNDMgMC4wNDggMC4wNDkgMC4wNTggMC4wNDZcbiBbMzkzXSAwLjA1OSAwLjA1MiAwLjA1MCAwLjA0OSAwLjA1MyAwLjA0NCAwLjA1NFxuIFs0MDBdIDAuMDUxIDAuMDU0IDAuMDU2IDAuMDQyIDAuMDQ4IDAuMDU1IDAuMDQ4XG4gWzQwN10gMC4wNjAgMC4wNjAgMC4wNTAgMC4wNDMgMC4wNTggMC4wNTAgMC4wNjBcbiBbNDE0XSAwLjA1MyAwLjA2NiAwLjA1NyAwLjA1MyAwLjA1NCAwLjA1NiAwLjA0OFxuIFs0MjFdIDAuMDYyIDAuMDUzIDAuMDU2IDAuMDQ5IDAuMDQ5IDAuMDU5IDAuMDYwXG4gWzQyOF0gMC4wNTAgMC4wNTAgMC4wNDUgMC4wNTIgMC4wNTcgMC4wNTYgMC4wNDlcbiBbNDM1XSAwLjA1NCAwLjA1OSAwLjA2NiAwLjA1OSAwLjA1MCAwLjA0OCAwLjA0M1xuIFs0NDJdIDAuMDQ0IDAuMDU0IDAuMDUwIDAuMDU4IDAuMDQ5IDAuMDQxIDAuMDQ0XG4gWzQ0OV0gMC4wNTQgMC4wNTcgMC4wNjYgMC4wNDkgMC4wNDkgMC4wNTMgMC4wNTlcbiBbNDU2XSAwLjA2MSAwLjA2MSAwLjA0OCAwLjA1OSAwLjA1MyAwLjA0NyAwLjA2OFxuIFs0NjNdIDAuMDU2IDAuMDY0IDAuMDU4IDAuMDQyIDAuMDU0IDAuMDYwIDAuMDU0XG4gWzQ3MF0gMC4wNzkgMC4wNzAgMC4wNTUgMC4wNTcgMC4wNTUgMC4wNTQgMC4wNjVcbiBbNDc3XSAwLjA1MCAwLjA1NCAwLjA2MiAwLjA1NCAwLjA1NyAwLjA1OCAwLjA2M1xuIFs0ODRdIDAuMDQ5IDAuMDU2IDAuMDUyIDAuMDU5IDAuMDYzIDAuMDUzIDAuMDM5XG4gWzQ5MV0gMC4wNTMgMC4wNTAgMC4wNDMgMC4wNTYgMC4wNDggMC4wNTcgMC4wNTVcbiBbNDk4XSAwLjA2NSAwLjA1MSAwLjA2NyAwLjA0OSAwLjA0OCAwLjA0MSAwLjA2OFxuIFs1MDVdIDAuMDY0IDAuMDQxIDAuMDU0IDAuMDU1IDAuMDQ3IDAuMDUzIDAuMDM5XG4gWzUxMl0gMC4wNjggMC4wNDIgMC4wNTUgMC4wNTIgMC4wNTQgMC4wNDAgMC4wNTlcbiBbNTE5XSAwLjA1NSAwLjA1MCAwLjA2MSAwLjA1NCAwLjA2MyAwLjA0OSAwLjA2NVxuIFs1MjZdIDAuMDY3IDAuMDYxIDAuMDQ2IDAuMDU1IDAuMDYwIDAuMDU4IDAuMDYxXG4gWzUzM10gMC4wNTggMC4wNTQgMC4wNDEgMC4wNTUgMC4wNTEgMC4wNjQgMC4wNjVcbiBbNTQwXSAwLjA1NiAwLjA2MCAwLjA1MCAwLjA0NCAwLjA1MyAwLjA1MCAwLjA1NFxuIFs1NDddIDAuMDU3IDAuMDQyIDAuMDYwIDAuMDQ0IDAuMDUyIDAuMDU2IDAuMDQ4XG4gWzU1NF0gMC4wNTUgMC4wNTkgMC4wNDIgMC4wNTMgMC4wNDAgMC4wNTMgMC4wNDdcbiBbNTYxXSAwLjA2MSAwLjAzMyAwLjA0NiAwLjA1OCAwLjA1MiAwLjA1MyAwLjA0NVxuIFs1NjhdIDAuMDQ4IDAuMDQ4IDAuMDU2IDAuMDYwIDAuMDU0IDAuMDU4IDAuMDU4XG4gWzU3NV0gMC4wNTcgMC4wNDMgMC4wNTIgMC4wNDMgMC4wMzggMC4wNDcgMC4wNTVcbiBbNTgyXSAwLjA2MCAwLjA2MSAwLjA0OSAwLjA1NyAwLjA0NyAwLjA1MyAwLjA1OFxuIFs1ODldIDAuMDYyIDAuMDU2IDAuMDQ2IDAuMDQzIDAuMDU1IDAuMDQ0IDAuMDYxXG4gWzU5Nl0gMC4wNTEgMC4wNDYgMC4wNTIgMC4wNDggMC4wNjAgMC4wNTEgMC4wNThcbiBbNjAzXSAwLjA0NCAwLjAzOSAwLjA1MSAwLjA1NSAwLjA1NSAwLjA2MiAwLjA1MFxuIFs2MTBdIDAuMDU5IDAuMDQ5IDAuMDUyIDAuMDQ2IDAuMDM5IDAuMDQ5IDAuMDc1XG4gWzYxN10gMC4wNjMgMC4wNTMgMC4wNjQgMC4wNTAgMC4wNTcgMC4wNTggMC4wNDZcbiBbNjI0XSAwLjA1NiAwLjA1NCAwLjA0NiAwLjA1NCAwLjA0NyAwLjA2MCAwLjA1N1xuIFs2MzFdIDAuMDQ2IDAuMDQ3IDAuMDQ5IDAuMDQ3IDAuMDU4IDAuMDUzIDAuMDU2XG4gWzYzOF0gMC4wNTggMC4wNDggMC4wNTMgMC4wNTUgMC4wNDcgMC4wNDggMC4wNjFcbiBbNjQ1XSAwLjA0MyAwLjA1NCAwLjA1NCAwLjA2MyAwLjA0NSAwLjA0NyAwLjA1MVxuIFs2NTJdIDAuMDU0IDAuMDM4IDAuMDUwIDAuMDUzIDAuMDYyIDAuMDQzIDAuMDYwXG4gWzY1OV0gMC4wNDYgMC4wNjAgMC4wNTMgMC4wNTYgMC4wNDkgMC4wNDcgMC4wNDZcbiBbNjY2XSAwLjA1NSAwLjA1MSAwLjA1MyAwLjA0OCAwLjA3MCAwLjA1NyAwLjA0MFxuIFs2NzNdIDAuMDQ2IDAuMDQ5IDAuMDQyIDAuMDUxIDAuMDUwIDAuMDY3IDAuMDUzXG4gWzY4MF0gMC4wNDkgMC4wNDMgMC4wNTcgMC4wNTQgMC4wNTkgMC4wNDcgMC4wNDZcbiBbNjg3XSAwLjA1MCAwLjAzNCAwLjA0NyAwLjAzNyAwLjA2NCAwLjA0OSAwLjA0N1xuIFs2OTRdIDAuMDU3IDAuMDUzIDAuMDQ1IDAuMDQzIDAuMDQ4IDAuMDUyIDAuMDQ4XG4gWzcwMV0gMC4wNTQgMC4wNTcgMC4wNDcgMC4wNTggMC4wNjQgMC4wNTMgMC4wNDJcbiBbNzA4XSAwLjA2MiAwLjA1NSAwLjA1OSAwLjA1NyAwLjA1NCAwLjA1MCAwLjA1MFxuIFs3MTVdIDAuMDUyIDAuMDQ0IDAuMDM4IDAuMDQ1IDAuMDU4IDAuMDU4IDAuMDU0XG4gWzcyMl0gMC4wNTggMC4wNTYgMC4wNTYgMC4wNTIgMC4wNDUgMC4wNzEgMC4wNDlcbiBbNzI5XSAwLjA1NCAwLjA0OSAwLjA1MSAwLjA1MSAwLjA0OCAwLjA1NiAwLjA1NVxuIFs3MzZdIDAuMDU4IDAuMDU0IDAuMDU0IDAuMDYzIDAuMDUwIDAuMDYwIDAuMDQ1XG4gWzc0M10gMC4wNTAgMC4wNTcgMC4wNTYgMC4wNTEgMC4wNDkgMC4wNDMgMC4wNThcbiBbNzUwXSAwLjA0OSAwLjA1NCAwLjA1MyAwLjA1MCAwLjA1MSAwLjA1OSAwLjA2MlxuIFs3NTddIDAuMDQ3IDAuMDUzIDAuMDU2IDAuMDYyIDAuMDU3IDAuMDQ5IDAuMDUzXG4gWzc2NF0gMC4wNDAgMC4wNDUgMC4wNTYgMC4wNDMgMC4wNTcgMC4wNTQgMC4wNTBcbiBbNzcxXSAwLjA2MCAwLjA1OSAwLjA2MiAwLjA3MSAwLjA1NCAwLjA1NSAwLjA0NFxuIFs3NzhdIDAuMDYzIDAuMDQ0IDAuMDQ4IDAuMDQ5IDAuMDQyIDAuMDQ2IDAuMDU5XG4gWzc4NV0gMC4wNTYgMC4wNTEgMC4wNTYgMC4wNDYgMC4wNTEgMC4wNTkgMC4wNTlcbiBbNzkyXSAwLjA1NiAwLjA2MCAwLjA2NCAwLjA1OCAwLjA2NCAwLjA0OSAwLjA2MFxuIFs3OTldIDAuMDUyIDAuMDU4IDAuMDU2IDAuMDYwIDAuMDYwIDAuMDU2IDAuMDUyXG4gWzgwNl0gMC4wNjIgMC4wNDcgMC4wNDIgMC4wNDkgMC4wNDEgMC4wNTggMC4wNTBcbiBbODEzXSAwLjA1MCAwLjA1NCAwLjA1MyAwLjA0NCAwLjA1OCAwLjA1MyAwLjA1N1xuIFs4MjBdIDAuMDYyIDAuMDU5IDAuMDU0IDAuMDU2IDAuMDUxIDAuMDUwIDAuMDUzXG4gWzgyN10gMC4wNDggMC4wNTggMC4wNjYgMC4wNTEgMC4wNTcgMC4wNTggMC4wNTNcbiBbODM0XSAwLjA0OCAwLjA1NCAwLjA1OCAwLjA1MCAwLjA1MyAwLjA2NCAwLjA1NVxuIFs4NDFdIDAuMDQ4IDAuMDU3IDAuMDQzIDAuMDQ4IDAuMDUyIDAuMDUxIDAuMDQ5XG4gWzg0OF0gMC4wNTEgMC4wNTcgMC4wNjEgMC4wNDggMC4wNDMgMC4wNTAgMC4wNDhcbiBbODU1XSAwLjA1OCAwLjA1NCAwLjA1NSAwLjA0NCAwLjA0MSAwLjA0OCAwLjA0OFxuIFs4NjJdIDAuMDU3IDAuMDUxIDAuMDQ1IDAuMDUxIDAuMDUwIDAuMDU0IDAuMDU0XG4gWzg2OV0gMC4wNTYgMC4wMzAgMC4wNDYgMC4wNjAgMC4wNjkgMC4wNjMgMC4wNDRcbiBbODc2XSAwLjA2MiAwLjA1MSAwLjA2MiAwLjA2NyAwLjA0NyAwLjA1MCAwLjA0MVxuIFs4ODNdIDAuMDUyIDAuMDY4IDAuMDYyIDAuMDQ3IDAuMDUxIDAuMDM5IDAuMDQ5XG4gWzg5MF0gMC4wNTkgMC4wNTMgMC4wNTYgMC4wNDAgMC4wNTYgMC4wMzUgMC4wNDVcbiBbODk3XSAwLjA0OSAwLjA1NSAwLjA1MSAwLjA1OSAwLjA0OCAwLjA0MiAwLjA1OVxuIFs5MDRdIDAuMDQyIDAuMDY2IDAuMDUyIDAuMDU3IDAuMDQ1IDAuMDQ3IDAuMDU0XG4gWzkxMV0gMC4wNTkgMC4wNDIgMC4wNjcgMC4wNDcgMC4wNTYgMC4wNTIgMC4wNTlcbiBbOTE4XSAwLjA0NiAwLjA2NCAwLjA1OSAwLjA1OCAwLjA1NCAwLjA1NyAwLjA1NFxuIFs5MjVdIDAuMDQzIDAuMDQyIDAuMDUyIDAuMDQ5IDAuMDQ1IDAuMDU3IDAuMDUyXG4gWzkzMl0gMC4wNTYgMC4wNTIgMC4wNTYgMC4wNjkgMC4wNTkgMC4wNDYgMC4wNjBcbiBbOTM5XSAwLjA1MCAwLjA0MCAwLjA1OSAwLjA2NyAwLjA0OSAwLjA1NyAwLjA1M1xuIFs5NDZdIDAuMDQ1IDAuMDQ0IDAuMDUzIDAuMDQ0IDAuMDQyIDAuMDUxIDAuMDYyXG4gWzk1M10gMC4wNTEgMC4wNDMgMC4wNTUgMC4wNTkgMC4wNTAgMC4wNTMgMC4wNDNcbiBbOTYwXSAwLjA0MyAwLjA1MSAwLjA1MSAwLjA1NCAwLjA1NCAwLjA1MyAwLjA1M1xuIFs5NjddIDAuMDQyIDAuMDU2IDAuMDUyIDAuMDYyIDAuMDQ5IDAuMDQzIDAuMDU0XG4gWzk3NF0gMC4wNjMgMC4wNTIgMC4wNDUgMC4wNDQgMC4wNTcgMC4wNTQgMC4wNTJcbiBbOTgxXSAwLjA2MyAwLjA2MCAwLjA1NCAwLjA1MiAwLjA1NiAwLjA1NSAwLjA0NlxuIFs5ODhdIDAuMDUxIDAuMDQ3IDAuMDUxIDAuMDQ3IDAuMDYwIDAuMDQxIDAuMDUyXG4gWzk5NV0gMC4wNTQgMC4wNTAgMC4wNjIgMC4wNTQgMC4wNDMgMC4wNjBcbiJ9 -->
+<pre><code>   [1] 0.048 0.047 0.061 0.046 0.055 0.050 0.065
+   [8] 0.050 0.045 0.061 0.063 0.056 0.057 0.054
+  [15] 0.060 0.054 0.054 0.047 0.052 0.044 0.038
+  [22] 0.057 0.057 0.064 0.050 0.049 0.068 0.049
+  [29] 0.044 0.056 0.039 0.053 0.050 0.069 0.048
+  [36] 0.053 0.047 0.049 0.060 0.047 0.063 0.064
+  [43] 0.065 0.052 0.059 0.053 0.058 0.047 0.059
+  [50] 0.053 0.056 0.064 0.050 0.052 0.041 0.059
+  [57] 0.063 0.060 0.046 0.052 0.061 0.046 0.054
+  [64] 0.056 0.057 0.044 0.045 0.045 0.048 0.052
+  [71] 0.056 0.059 0.041 0.055 0.060 0.055 0.046
+  [78] 0.046 0.059 0.057 0.053 0.055 0.060 0.052
+  [85] 0.050 0.045 0.047 0.048 0.054 0.044 0.044
+  [92] 0.052 0.054 0.043 0.046 0.058 0.061 0.041
+  [99] 0.050 0.046 0.058 0.057 0.046 0.058 0.047
+ [106] 0.061 0.049 0.050 0.048 0.054 0.048 0.049
+ [113] 0.058 0.055 0.050 0.046 0.045 0.049 0.050
+ [120] 0.059 0.062 0.044 0.041 0.047 0.060 0.044
+ [127] 0.067 0.036 0.049 0.065 0.051 0.056 0.048
+ [134] 0.061 0.054 0.065 0.067 0.054 0.070 0.044
+ [141] 0.054 0.054 0.057 0.051 0.044 0.042 0.054
+ [148] 0.056 0.048 0.063 0.066 0.047 0.052 0.038
+ [155] 0.052 0.054 0.062 0.057 0.053 0.058 0.051
+ [162] 0.040 0.051 0.057 0.042 0.052 0.061 0.051
+ [169] 0.073 0.054 0.058 0.050 0.043 0.064 0.063
+ [176] 0.047 0.060 0.053 0.041 0.050 0.047 0.052
+ [183] 0.052 0.059 0.049 0.038 0.064 0.057 0.054
+ [190] 0.061 0.051 0.036 0.053 0.060 0.061 0.063
+ [197] 0.051 0.061 0.063 0.055 0.057 0.036 0.057
+ [204] 0.059 0.049 0.049 0.048 0.046 0.058 0.046
+ [211] 0.055 0.058 0.037 0.052 0.050 0.052 0.053
+ [218] 0.043 0.052 0.049 0.069 0.059 0.054 0.048
+ [225] 0.055 0.051 0.036 0.054 0.051 0.052 0.049
+ [232] 0.048 0.052 0.050 0.050 0.046 0.041 0.056
+ [239] 0.050 0.055 0.063 0.040 0.050 0.056 0.064
+ [246] 0.052 0.061 0.073 0.057 0.049 0.045 0.056
+ [253] 0.061 0.049 0.057 0.038 0.064 0.045 0.042
+ [260] 0.048 0.057 0.041 0.055 0.069 0.052 0.060
+ [267] 0.053 0.053 0.056 0.051 0.060 0.049 0.055
+ [274] 0.055 0.061 0.047 0.054 0.057 0.043 0.058
+ [281] 0.055 0.052 0.057 0.059 0.056 0.072 0.045
+ [288] 0.044 0.052 0.055 0.050 0.045 0.048 0.051
+ [295] 0.053 0.050 0.050 0.053 0.054 0.052 0.065
+ [302] 0.048 0.068 0.056 0.043 0.050 0.037 0.049
+ [309] 0.049 0.061 0.052 0.063 0.063 0.056 0.054
+ [316] 0.040 0.059 0.050 0.053 0.051 0.054 0.047
+ [323] 0.035 0.053 0.052 0.063 0.047 0.042 0.062
+ [330] 0.054 0.048 0.048 0.050 0.061 0.052 0.055
+ [337] 0.045 0.050 0.039 0.056 0.046 0.058 0.055
+ [344] 0.066 0.050 0.052 0.064 0.057 0.058 0.067
+ [351] 0.046 0.064 0.053 0.049 0.060 0.059 0.055
+ [358] 0.053 0.045 0.052 0.054 0.060 0.057 0.047
+ [365] 0.057 0.051 0.042 0.062 0.055 0.060 0.058
+ [372] 0.052 0.063 0.062 0.043 0.059 0.058 0.066
+ [379] 0.061 0.049 0.052 0.050 0.050 0.050 0.047
+ [386] 0.043 0.052 0.043 0.048 0.049 0.058 0.046
+ [393] 0.059 0.052 0.050 0.049 0.053 0.044 0.054
+ [400] 0.051 0.054 0.056 0.042 0.048 0.055 0.048
+ [407] 0.060 0.060 0.050 0.043 0.058 0.050 0.060
+ [414] 0.053 0.066 0.057 0.053 0.054 0.056 0.048
+ [421] 0.062 0.053 0.056 0.049 0.049 0.059 0.060
+ [428] 0.050 0.050 0.045 0.052 0.057 0.056 0.049
+ [435] 0.054 0.059 0.066 0.059 0.050 0.048 0.043
+ [442] 0.044 0.054 0.050 0.058 0.049 0.041 0.044
+ [449] 0.054 0.057 0.066 0.049 0.049 0.053 0.059
+ [456] 0.061 0.061 0.048 0.059 0.053 0.047 0.068
+ [463] 0.056 0.064 0.058 0.042 0.054 0.060 0.054
+ [470] 0.079 0.070 0.055 0.057 0.055 0.054 0.065
+ [477] 0.050 0.054 0.062 0.054 0.057 0.058 0.063
+ [484] 0.049 0.056 0.052 0.059 0.063 0.053 0.039
+ [491] 0.053 0.050 0.043 0.056 0.048 0.057 0.055
+ [498] 0.065 0.051 0.067 0.049 0.048 0.041 0.068
+ [505] 0.064 0.041 0.054 0.055 0.047 0.053 0.039
+ [512] 0.068 0.042 0.055 0.052 0.054 0.040 0.059
+ [519] 0.055 0.050 0.061 0.054 0.063 0.049 0.065
+ [526] 0.067 0.061 0.046 0.055 0.060 0.058 0.061
+ [533] 0.058 0.054 0.041 0.055 0.051 0.064 0.065
+ [540] 0.056 0.060 0.050 0.044 0.053 0.050 0.054
+ [547] 0.057 0.042 0.060 0.044 0.052 0.056 0.048
+ [554] 0.055 0.059 0.042 0.053 0.040 0.053 0.047
+ [561] 0.061 0.033 0.046 0.058 0.052 0.053 0.045
+ [568] 0.048 0.048 0.056 0.060 0.054 0.058 0.058
+ [575] 0.057 0.043 0.052 0.043 0.038 0.047 0.055
+ [582] 0.060 0.061 0.049 0.057 0.047 0.053 0.058
+ [589] 0.062 0.056 0.046 0.043 0.055 0.044 0.061
+ [596] 0.051 0.046 0.052 0.048 0.060 0.051 0.058
+ [603] 0.044 0.039 0.051 0.055 0.055 0.062 0.050
+ [610] 0.059 0.049 0.052 0.046 0.039 0.049 0.075
+ [617] 0.063 0.053 0.064 0.050 0.057 0.058 0.046
+ [624] 0.056 0.054 0.046 0.054 0.047 0.060 0.057
+ [631] 0.046 0.047 0.049 0.047 0.058 0.053 0.056
+ [638] 0.058 0.048 0.053 0.055 0.047 0.048 0.061
+ [645] 0.043 0.054 0.054 0.063 0.045 0.047 0.051
+ [652] 0.054 0.038 0.050 0.053 0.062 0.043 0.060
+ [659] 0.046 0.060 0.053 0.056 0.049 0.047 0.046
+ [666] 0.055 0.051 0.053 0.048 0.070 0.057 0.040
+ [673] 0.046 0.049 0.042 0.051 0.050 0.067 0.053
+ [680] 0.049 0.043 0.057 0.054 0.059 0.047 0.046
+ [687] 0.050 0.034 0.047 0.037 0.064 0.049 0.047
+ [694] 0.057 0.053 0.045 0.043 0.048 0.052 0.048
+ [701] 0.054 0.057 0.047 0.058 0.064 0.053 0.042
+ [708] 0.062 0.055 0.059 0.057 0.054 0.050 0.050
+ [715] 0.052 0.044 0.038 0.045 0.058 0.058 0.054
+ [722] 0.058 0.056 0.056 0.052 0.045 0.071 0.049
+ [729] 0.054 0.049 0.051 0.051 0.048 0.056 0.055
+ [736] 0.058 0.054 0.054 0.063 0.050 0.060 0.045
+ [743] 0.050 0.057 0.056 0.051 0.049 0.043 0.058
+ [750] 0.049 0.054 0.053 0.050 0.051 0.059 0.062
+ [757] 0.047 0.053 0.056 0.062 0.057 0.049 0.053
+ [764] 0.040 0.045 0.056 0.043 0.057 0.054 0.050
+ [771] 0.060 0.059 0.062 0.071 0.054 0.055 0.044
+ [778] 0.063 0.044 0.048 0.049 0.042 0.046 0.059
+ [785] 0.056 0.051 0.056 0.046 0.051 0.059 0.059
+ [792] 0.056 0.060 0.064 0.058 0.064 0.049 0.060
+ [799] 0.052 0.058 0.056 0.060 0.060 0.056 0.052
+ [806] 0.062 0.047 0.042 0.049 0.041 0.058 0.050
+ [813] 0.050 0.054 0.053 0.044 0.058 0.053 0.057
+ [820] 0.062 0.059 0.054 0.056 0.051 0.050 0.053
+ [827] 0.048 0.058 0.066 0.051 0.057 0.058 0.053
+ [834] 0.048 0.054 0.058 0.050 0.053 0.064 0.055
+ [841] 0.048 0.057 0.043 0.048 0.052 0.051 0.049
+ [848] 0.051 0.057 0.061 0.048 0.043 0.050 0.048
+ [855] 0.058 0.054 0.055 0.044 0.041 0.048 0.048
+ [862] 0.057 0.051 0.045 0.051 0.050 0.054 0.054
+ [869] 0.056 0.030 0.046 0.060 0.069 0.063 0.044
+ [876] 0.062 0.051 0.062 0.067 0.047 0.050 0.041
+ [883] 0.052 0.068 0.062 0.047 0.051 0.039 0.049
+ [890] 0.059 0.053 0.056 0.040 0.056 0.035 0.045
+ [897] 0.049 0.055 0.051 0.059 0.048 0.042 0.059
+ [904] 0.042 0.066 0.052 0.057 0.045 0.047 0.054
+ [911] 0.059 0.042 0.067 0.047 0.056 0.052 0.059
+ [918] 0.046 0.064 0.059 0.058 0.054 0.057 0.054
+ [925] 0.043 0.042 0.052 0.049 0.045 0.057 0.052
+ [932] 0.056 0.052 0.056 0.069 0.059 0.046 0.060
+ [939] 0.050 0.040 0.059 0.067 0.049 0.057 0.053
+ [946] 0.045 0.044 0.053 0.044 0.042 0.051 0.062
+ [953] 0.051 0.043 0.055 0.059 0.050 0.053 0.043
+ [960] 0.043 0.051 0.051 0.054 0.054 0.053 0.053
+ [967] 0.042 0.056 0.052 0.062 0.049 0.043 0.054
+ [974] 0.063 0.052 0.045 0.044 0.057 0.054 0.052
+ [981] 0.063 0.060 0.054 0.052 0.056 0.055 0.046
+ [988] 0.051 0.047 0.051 0.047 0.060 0.041 0.052
+ [995] 0.054 0.050 0.062 0.054 0.043 0.060</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="13" style="list-style-type: decimal">
+<li>What is the expected value of Y?</li>
+</ol>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBDaGFwdGVyIDE0LiBSYW5kb20gVmFyaWFibGVzCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBDaGFwdGVyIDE0LiBSYW5kb20gVmFyaWFibGVzCgojIyAxNC4xIFJhbmRvbSBWYXJpYWJsZXMKOuyLpO2Wie2VoCDrlYzrp4jri6Qg64uk66W4IOqwkuydtCDrgpjsmKTripQg67OA7IiYCgpIZXJlIGBYYCBpcyBhIHJhbmRvbSB2YXJpYWJsZTogZXZlcnkgdGltZSB3ZSBzZWxlY3QgYSBuZXcgYmVhZCB0aGUgb3V0Y29tZSBjaGFuZ2VzIHJhbmRvbWx5LiBTZWUgYmVsb3c6CmBgYHtyfQpiZWFkcyA8LSByZXAoIGMoInJlZCIsICJibHVlIiksIHRpbWVzID0gYygyLDMpKQpYIDwtIGlmZWxzZShzYW1wbGUoYmVhZHMsIDEpID09ICJibHVlIiwgMSwgMCkKCmlmZWxzZShzYW1wbGUoYmVhZHMsIDEpID09ICJibHVlIiwgMSwgMCkKaWZlbHNlKHNhbXBsZShiZWFkcywgMSkgPT0gImJsdWUiLCAxLCAwKQppZmVsc2Uoc2FtcGxlKGJlYWRzLCAxKSA9PSAiYmx1ZSIsIDEsIDApCmBgYAoKCiMjIDE0LjIgU2FtcGxpbmcgbW9kZWxzCgpbdXJuOmluZGl2aWR1YWxzIGFzc2lnbmVkXSAtPihkcmF3KS0+IFJhbmRvbQoKQmVjYXVzZSB3ZSBrbm93IHRoZSBwcm9wb3J0aW9ucyBvZiAxcyBhbmQgLTFzLCB3ZSBjYW4gZ2VuZXJhdGUgdGhlIGRyYXdzIHdpdGggb25lIGxpbmUgb2YgY29kZSwgd2l0aG91dCBkZWZpbmluZyBgY29sb3JgOgpgYGB7cn0KbiA8LSAxMDAwClggPC0gc2FtcGxlKGMoLTEsMSksIG4sIHJlcGxhY2UgPSBUUlVFLCBwcm9iPWMoOS8xOSwgMTAvMTkpKQpgYGAKV2UgY2FsbCB0aGlzIGEgKipzYW1wbGluZyBtb2RlbCoqIHNpbmNlIHdlIGFyZSBtb2RlbGluZyB0aGUgcmFuZG9tIGJlaGF2aW9yIG9mIHJvdWxldHRlIHdpdGggdGhlIHNhbXBsaW5nIG9mIGRyYXdzIGZyb20gYW4gdXJuLiBUaGUgdG90YWwgd2lubmluZ3MgKipTKiogaXMgc2ltcGx5IHRoZSBzdW0gb2YgdGhlc2UgMSwwMDAgaW5kZXBlbmRlbnQgZHJhd3M6CmBgYHtyfQpYIDwtIHNhbXBsZShjKC0xLDEpLCBuLCByZXBsYWNlID0gVFJVRSwgcHJvYj1jKDkvMTksIDEwLzE5KSkKUyA8LSBzdW0oWCkKUwpgYGAKCiMjIDE0LjMgVGhlIHByb2JhYmlsaXR5IGRpc3RyaWJ1dGlvbiBvZiByYW5kb20gdmFyaWFibGUKUyA8LSByYW5kb20gdmFyaWFibGUKRihhKSA9IFByKFM8PWEpIDwtIHJhbmRvbSB2YXJpYWJsZSdzIGRpc3RyaWJ1dGlvbiBmdW5jdGlvbgptZWFuKFMpIDwtIGV4cGVjdGVkIHZhbHVlCnNkKFMpIDwtIHN0YW5kYXJkIGVycm9yCgpiaW5vbWluYWwgZGlzdHJpYnV0aW9uOiDsnbTtla3rtoTtj6wo7J287KCV7ZWcIO2ZleuloCBw66W8IOqwgOynhCDrj4Xrpr3si5ztlonsnYQgbuuyiCDrsJjrs7XtlojsnYTrlYzsnZgg7ZmV66Wg67aE7Y+sKQoqKkIobixwKSwgbuuyiCDspJEgcuuyiCDsi6TtlonrkKAg7ZmV66WgOiBQKFg9cik9bkNyKnBeciooMS1wKV4obi1yKSoqCioq7J207ZWt67aE7Y+s64qUIGRpc2NyZXRl7ZWY64ukISEqKgoKYHBiaW5vbWAgOiDsnbTtla3rtoTtj6zsl5Ag64yA7ZWY7JesIHAoeDw9YSkg7ZmV66WgIOqzhOyCsApwYmlub20oYSwgc2l6ZT1uLCBwcm9iPXApCiM+IHAoeDw9YSkKCmBkYmlub21gIDog7J207ZWt67aE7Y+s7JeQIOuMgO2VmOyXrCBQKHgp7J2YIOqwkgpkYmlub20oeCwgc2l6ZSwgcHJvYikKCgoKUyBpcyByYW5kb20gdmFyaWFibGUuCmBgYHtyfQpuIDwtIDEwMDAKQiA8LSAxMDAwMApyb3VsZXR0ZV93aW5uaW5ncyA8LSBmdW5jdGlvbihuKXsKICBYIDwtIHNhbXBsZShjKC0xLDEpLCBuLCByZXBsYWNlID0gVFJVRSwgcHJvYj1jKDkvMTksIDEwLzE5KSkKICBzdW0oWCkKfQpTIDwtIHJlcGxpY2F0ZShCLCByb3VsZXR0ZV93aW5uaW5ncyhuKSkKCmBgYAoKTm93IHdlIGNhbiBhc2sgdGhlIGZvbGxvd2luZzogaW4gb3VyIHNpbXVsYXRpb25zLCBob3cgb2Z0ZW4gZGlkIHdlIGdldCBzdW1zIGxlc3MgdGhhbiBvciBlcXVhbCB0byBhPwpgYGB7cn0KbWVhbihTIDw9IGEpCmBgYApUaGlzIHdpbGwgYmUgYSB2ZXJ5IGdvb2QgYXBwcm94aW1hdGlvbiBvZiBGKGEpIGFuZCB3ZSBjYW4gZWFzaWx5IGFuc3dlciB0aGUgY2FzaW5v4oCZcyBxdWVzdGlvbjogaG93IGxpa2VseSBpcyBpdCB0aGF0IHdlIHdpbGwgbG9zZSBtb25leT8gV2UgY2FuIHNlZSBpdCBpcyBxdWl0ZSBsb3c6CmBgYHtyfQptZWFuKFM8MCkKYGBgCgoKU3BlY2lmaWNhbGx5LCBpbiBvdXIgZXhhbXBsZSBhYm92ZSwgd2UgY2FuIHNob3cgdGhhdCAoUytuKS8yIGZvbGxvdyBhIGJpbm9taWFsIGRpc3RyaWJ1dGlvbi4KCldlIGNhbiB1c2UgdGhlIGZ1bmN0aW9uIGBkYmlub21gIGFuZCBgcGJpbm9tYCB0byBjb21wdXRlIHRoZSBwcm9iYWJpbGl0aWVzIGV4YWN0bHkuIEZvciBleGFtcGxlLCB0byBjb21wdXRlIFByKFM8MCksIHdlIG5vdGUgdGhhdDoKUHIoUzwwKSA9IFByKChTK24pLzIgPCAoMCtuKS8yKQphbmQgd2UgY2FuIHVzZSB0aGUgYHBiaW5vbWAgdG8gY29tcHV0ZSBQcihTPD0wKQpgYGB7cn0KbiA8LSAxMDAwCnBiaW5vbShuLzIsIHNpemUgPSBuLCBwcm9iID0gMTAvMTkpCmBgYAoKQmVjYXVzZSB0aGlzIGlzIGEgZGlzY2V0ZSBwcm9iYWJpbGl0eSBmdW5jdGlvbiwgdG8gZ2V0IFByKFM8MCkgcmF0aGVyIHRoYW4gUHIoUzw9MCksIHdlIHdyaXRlOgpgYGB7cn0KcGJpbm9tKG4vMi0xLCBzaXplID0gbiwgcHJvYiA9IDEwLzE5KQpgYGAKCgoKIyMgMTQuNCBEaXN0cmlidXRpb25zIHZlcnN1cyBwcm9iYWJpbGl0eSBkaXN0cmlidXRpb25zCgoxLiBkaXN0cmlidXRpb24gZnVuY3Rpb24KMi4gZHJhd2luZyBmcm9tIHVybiB3aXRoIG51bWJlcgozLiBNb250ZSAtIENhcmxvZQojMS4gbGlzdCBvZiBudW1iZXI/ID4gMiwzCiMyLiAxIGlzIHRoZW9yaWNhbCBhbmQgMyBkb24ndCBpbnZvbHZlIHVybgoKCiMjIDE0LjUgTm90YXRpb24gZm9yIHJhbmRvbSB2YXJpYmxlcwoKWCjrr7jrnpjsnZgg7JiI7LihLCByYW5kb20gdmFyaWFibGUpIDwgeCjsi6TsoJwg7Lih7KCV6rCSKQoKCiMjIDE0LjYgVGhlIGV4cGVjdGVkIHZhbHVlIGFuZCBzdGFuZGFyZCBlcnJvcgoKRVtYXSA6IGV4cGVjdGVkIHZhbHVlIG9mIHJhbmRvbSB2YWx1ZSBYCmV4cGVjdGVkIHZhbHVlIDogYXAgKyBiKDEtcCkvIGFi64qUIOqysOqzvCwgcOyZgCAxLXDripQg6rCBIOqysOqzvOydmCBwcm9iYWJpbGl0eQoKZXhwZWN0ZWQgdmFsdWUgb2YgYSByYW5kb20gdmFyaWFibGUgZGVmaW5lZCBieSBvbmUgZHJhdyBpcyB0aGUgYXZlcmFnZSBvZiB0aGUgbnVtYmVycyBpbiB0aGUgdXJuCgpTRVtYXTogc3RhbmRhcmQgZXJyb3I6IHNpemUgb2YgdGhlIHZhcmlhdGlvbiBhcm91bmQgdGhlIGV4cGVjdGVkIHZhbHVlLgoqKihudW1iZXIgb2YgZHJhd3MpXjEvMiAqIHN0YW5kYXJkIGRldmlhdGlvbiBvZiB0aGUgbnVtYmVyIGluIHRoZSB1cm4qKgoqKnN0YW5kYXJkIGRldmlhdGlvbjp8Yi1hfCoocCgxLXApKV4xLzIqKgoKCiMjIyMgMTQuNi4xIFBvcHVsYXRpb24gU0QgdmVyc3VzIHRoZSBzYW1wbGUgU0QKVGhlIHN0YW5kYXJkIGRldmlhdGlvbiBvZiBhIGxpc3QgYHhgIChiZWxvdyB3ZSB1c2UgaGVpZ2h0cyBhcyBhbiBleGFtcGxlKSBpcyBkZWZpbmVkIGFzIHRoZSBzcXVhcmUgcm9vdCBvZiB0aGUgYXZlcmFnZSBvZiB0aGUgc3F1YXJlZCBkaWZmZXJlbmNlczoKYGBge3J9Cmluc3RhbGwucGFja2FnZXMoImRzbGFicyIpCmxpYnJhcnkoZHNsYWJzKQp4IDwtIGhlaWdodHMkaGVpZ2h0Cm0gPC0gbWVhbih4KQpzIDwtIHNxcnQobWVhbigoeC1tKV4yKSkKYGBgCkhvd2V2ZXIsIGJlIGF3YXJlIHRoYXQgdGhlIHNkIGZ1bmN0aW9uIHJldHVybnMgYSBzbGlnaHRseSBkaWZmZXJlbnQgcmVzdWx0OgpgYGB7cn0KaWRlbnRpY2FsKHMsIHNkKHgpKQpzIC0gc2QoeCkKYGBgCgooeC1tKV4y7J2YIO2Pieq3oCDqtaztlaAg65WMIOybkOuemOuMgOuhnOudvOuptCDsoITssrTtlansnYQgbuycvOuhnCDrgpjriKDslbzrkJjripTrjbAgc2QoeCnripQgbi0x66GcIOuCmOuIlC4g6re4656Y7IScIHNkKHgp64yA7IugIOygleyEneydhCDsjajslbzrkJjripTrjbAgbuydmCDqsJLsnbQg7Lap67aE7Z6IIO2BrOuptCDqt7jqsowg6re46rGw66+A66GcIHNkKHgp7I2o64+EIOuQqC4KCgojIyAxNC43IENlbnRyYWwgTGltaXQgVGhlb3JlbQpDTFQgOiBudW1iZXIgb3IgZHJhd27snZgg6rCS7J20IO2BrOuptCBwcm9iYWJpbGl0eSBkaXN0cmlidXRpb24gb2YgdGhlIHN1bSBvZiB0aGUgaW5kZXBlbmRlbnQgZHJhd3MgaXMgYXBwcm94aW1hdGVseSBub3JtYWwKLT4gTW9udGUgQ2FybG/rjIDsi6AgRVtYXeyZgCBTRVtYXeuhnCDqsJIg6rOE7IKwIOqwgOuKpQoKV2UgcHJldmlvdXNseSByYW4gdGhpcyBNb250ZSBDYXJsbyBzaW11bGF0aW9uOgpgYGB7cn0KbiA8LSAxMDAwCkIgPC0gMTAwMDAKcm91bGV0dGVfd2lubmluZ3MgPC0gZnVuY3Rpb24obil7CiAgWCA8LSBzYW1wbGUoYygtMSwxKSwgbiwgcmVwbGFjZSA9IFRSVUUsIHByb2I9Yyg5LzE5LCAxMC8xOSkpCiAgc3VtKFgpCn0KUyA8LSByZXBsaWNhdGUoQiwgcm91bGV0dGVfd2lubmluZ3MobikpCmBgYAoKVGhlIENlbnRyYWwgTGltaXQgVGhlb3JlbSAoQ0xUKSB0ZWxscyB1cyB0aGF0IHRoZSBzdW0gUyBpcyBhcHByb3hpbWF0ZWQgYnkgYSBub3JtYWwgZGlzdHJpYnV0aW9uLiBVc2luZyB0aGUgZm9ybXVsYXMgYWJvdmUsIHdlIGtub3cgdGhhdCB0aGUgZXhwZWN0ZWQgdmFsdWUgYW5kIHN0YW5kYXJkIGVycm9yIGFyZToKYGBge3J9Cm4gKiAoMjAtMTgpLzM4IApzcXJ0KG4pICogMiAqIHNxcnQoOTApLzE5IApgYGAKClRoZSB0aGVvcmV0aWNhbCB2YWx1ZXMgYWJvdmUgbWF0Y2ggdGhvc2Ugb2J0YWluZWQgd2l0aCB0aGUgTW9udGUgQ2FybG8gc2ltdWxhdGlvbjoKYGBge3J9Cm1lYW4oUykKc2QoUykKYGBgClVzaW5nIHRoZSBDTFQsIHdlIGNhbiBza2lwIHRoZSBNb250ZSBDYXJsbyBzaW11bGF0aW9uIGFuZCBpbnN0ZWFkIGNvbXB1dGUgdGhlIHByb2JhYmlsaXR5IG9mIHRoZSBjYXNpbm8gbG9zaW5nIG1vbmV5IHVzaW5nIHRoaXMgYXBwcm94aW1hdGlvbiwgd2hpY2ggaXMgYWxzbyBpbiB2ZXJ5IGdvb2QgYWdyZWVtZW50IHdpdGggb3VyIE1vbnRlIENhcmxvIHJlc3VsdDoKYGBge3J9Cm11IDwtIG4gKiAoMjAtMTgpLzM4CnNlIDwtICBzcXJ0KG4pICogMiAqIHNxcnQoOTApLzE5IApwbm9ybSgwLCBtdSwgc2UpCm1lYW4oUyA8IDApCmBgYAoKCiMjIyMgMTQuNy4xIEhvdyBsYXJnZSBpcyBsYXJnZSBpbiB0aGUgQ2VudHJhbCBMaW1pdCBUSGVvcmVtPwrrs7TthrUgMzAK6re8642wIHN1Y2Nlc3PsnZggcHJvYmFiaWxpdHnqsIAg66ek7JqwIOuCruydhOuVjOuKlCDslYTrrLTrpqwg7Iir7J6Q6rCAIOy7pOuPhCBub3JtYWwgZGlzdHJpYnV0aW9u6rO8IOqxsOumrOqwgCDrqYgg7Jik7Z6I66CkICoqcG9zc2lvbiBkaXN0cmlidXRpb24qKuydtCDrjZTsmrEg7KCB7KCICgpgZHBvaXNgLCBgcHBvaXNgLCBgcnBvaXNgCgoKIyMgMTQuOCBTdGF0aXN0aWNhbCBwcm9wZXJ0aWVzIG9mIGF2ZXJhZ2VzCjEuIFRoZSBleHBlY3RlZCB2YWx1ZSBvZiB0aGUgc3VtIG9mIHJhbmRvbSB2YXJpYWJsZXMgaXMgdGhlIHN1bSBvZiBlYWNoIHJhbmRvbSB2YXJpYWJsZeKAmXMgZXhwZWN0ZWQgdmFsdWUuCkVbWDEgKyBYMiArIFgzIC4uLl0gPSBFW1gxXSArIEVbWDJdLi4KSWYgdGhlIFggYXJlIGluZGVwZW5kZW50IGRyYXdzIGZyb20gdGhlIHVybiwgdGhlbiB0aGV5IGFsbCBoYXZlIHRoZSBzYW1lIGV4cGVjdGVkIHZhbHVlLiBMZXTigJlzIGNhbGwgaXQgzrwgYW5kIHRodXM6CkVbWDEgKyBYMiAuLiArICBYbl0gPSBuzrwKCjIuIFRoZSBleHBlY3RlZCB2YWx1ZSBvZiBhIG5vbi1yYW5kb20gY29uc3RhbnQgdGltZXMgYSByYW5kb20gdmFyaWFibGUgaXMgdGhlIG5vbi1yYW5kb20gY29uc3RhbnQgdGltZXMgdGhlIGV4cGVjdGVkIHZhbHVlIG9mIGEgcmFuZG9tIHZhcmlhYmxlLgpFW2FYXSA9IGEgKiBFW1hdCkVbKFgxICsgWDIgLi4gKyAgWG4pL25dID0gRVsoWDEgKyBYMiAuLiArICBYbildL24gPSBuzrwvbiA9IM68CgozLiBTRVtYMSArIFgyICsgLi4gK1huXSA9IChTRVtYMV1eMiArIC4uU0VbWG5dXjIpXjEvMgoKNC4gU0VbYVhdID0gYSpTRVtYXQoKNi4gWCBpcyBub3JtYWxseSBkaXN0cmliaXV0ZWQgcmFuZG9tIHZhcmlhYmxlCmFYICsgQiBpcyBub3JtYWxseSBkaXN0cmlidXRlZCByYW5kb20gdmFyaWFibGUsIHRoYXQgbXVsdGlwbHlpbmcgYnkgYSB0aGVuIHNoaWZ0aW5nIHRoZSBjZW50ZXIgYnkgYi4KCgojIyAxNC45IExhdyBvZiBsYXJnZSBudW1iZXJzCm7snbQg7Luk7KeA66m0IHN0YW5kYXJkIGVycm9y64qUIDDsl5Ag6rCA6rmM7JuM7KeA6rOgIGF2ZXJhZ2Ugb2YgZHJhd+uKlCB1cm7snZggYXZlcmFnZeyXkCDqsIDquYzsm4zsp5AuCgoKIyMjIyAxNC45LjEgTWlzaW50ZXJwcmV0aW5nIGxhdyBvZiBhdmVyYWdlCmxhdyBvZiBhdmVyYWdl64qUIG7snZgg7Iir7J6Q6rCAIO2BtOuVjOunjCDsoIHsmqnrkJjqs6Ag6rCB6rCB7J2YIOyLnO2WieydgCDrj4Xrpr3snbTrr4DroZwg7JWe7J2YIOqysOqzvOyXkCDsmIHtlqXsnYQg67Cb7KeAIOyViuuKlOuLpC4KCgojIyAxNC4xMCBFeGVyY2lzZXMKMS4gIEluIEFtZXJpY2FuIFJvdWxldHRlIHlvdSBjYW4gYWxzbyBiZXQgb24gZ3JlZW4uIFRoZXJlIGFyZSAxOCByZWRzLCAxOCBibGFja3MgYW5kIDIgZ3JlZW5zICgwIGFuZCAwMCkuIFdoYXQgYXJlIHRoZSBjaGFuY2VzIHRoZSBncmVlbiBjb21lcyBvdXQ/CmBgYHtyfQoyLygxOCsxOCsyKQpgYGAKCjIuIFRoZSBwYXlvdXQgZm9yIHdpbm5pbmcgb24gZ3JlZW4gaXMgJDE3IGRvbGxhcnMuIFRoaXMgbWVhbnMgdGhhdCBpZiB5b3UgYmV0IGEgZG9sbGFyIGFuZCBpdCBsYW5kcyBvbiBncmVlbiwgeW91IGdldCAkMTcuIENyZWF0ZSBhIHNhbXBsaW5nIG1vZGVsIHVzaW5nIHNhbXBsZSB0byBzaW11bGF0ZSB0aGUgcmFuZG9tIHZhcmlhYmxlIFggZm9yIHlvdXIgd2lubmluZ3MuIEhpbnQ6IHNlZSB0aGUgZXhhbXBsZSBiZWxvdyBmb3IgaG93IGl0IHNob3VsZCBsb29rIGxpa2Ugd2hlbiBiZXR0aW5nIG9uIHJlZC4KYGBge3J9ClggPC0gc2FtcGxlKGMoMTcsIC0xKSwgcHJvYiA9IGMoMi8zOCwzNi8zOCkpCmBgYAoKMy4gQ29tcHV0ZSB0aGUgZXhwZWN0ZWQgdmFsdWUgb2YgWApgYGB7cn0KMTcqMi8zOCAtMzYvMzgKYGBgCgo0LiBDb21wdXRlIHRoZSBzdGFuZGFyZCBlcnJvciBvZiBYCmBgYHtyfQoxOCpzcXJ0KCgyLzM4KSooMzYvMzgpKQpgYGAKCjUuICBOb3cgY3JlYXRlIGEgcmFuZG9tIHZhcmlhYmxlIFMgdGhhdCBpcyB0aGUgc3VtIG9mIHlvdXIgd2lubmluZ3MgYWZ0ZXIgYmV0dGluZyBvbiBncmVlbiAxMDAwIHRpbWVzLiBIaW50OiBjaGFuZ2UgdGhlIGFyZ3VtZW50IGBzaXplYCBhbmQgYHJlcGxhY2VgIGluIHlvdXIgYW5zd2VyIHRvIHF1ZXN0aW9uIDIuIFN0YXJ0IHlvdXIgY29kZSBieSBzZXR0aW5nIHRoZSBzZWVkIHRvIDEgd2l0aCBgc2V0LnNlZWQoMSlgLgpgYGB7cn0Kc2V0LnNlZWQoMSkKc2FtcGxlKGMoMTcsIC0xKSwgcHJvYiA9IGMoMi8zOCwzNi8zOCksIDEwMDAsIHJlcGxhY2UgPSBUUlVFKQoKc2V0LnNlZWQoMSkKcmVzdWx0cyA8LSBzYW1wbGUoYygxNywgLTEpLCBwcm9iID0gYygyLzM4LDM2LzM4KSwgMTAwMCwgcmVwbGFjZSA9IFRSVUUpClMgPC0gc3VtKHJlc3VsdHMpCmBgYAoKNi4gV2hhdCBpcyB0aGUgZXhwZWN0ZWQgdmFsdWUgb2YgUz8KYGBge3J9CjEwMDAqKCgxNyoyLzM4KS0oMzYvMzgpKQpgYGAKCjcuIFdoYXQgaXMgdGhlIHN0YW5kYXJkIGVycm9yIG9mIFM/CmBgYHtyfQpzcXJ0KDEwMDApKjE4KnNxcnQoKDIvMzgpKigzNi8zOCkpCmBgYAoKOC4gV2hhdCBpcyB0aGUgcHJvYmFiaWxpdHkgdGhhdCB5b3UgZW5kIHVwIHdpbm5pbmcgbW9uZXk/IEhpbnQ6IHVzZSB0aGUgQ0xUCmBgYHtyfQoxIC0gcG5vcm0oMCwgLTUyLjYzLCAxMjcuMTApCmBgYAoKOS4gQ3JlYXRlIGEgTW9udGUgQ2FybG8gc2ltdWxhdGlvbiB0aGF0IGdlbmVyYXRlcyAxLDAwMCBvdXRjb21lcyBvZiBTLiBDb21wdXRlIHRoZSBhdmVyYWdlIGFuZCBzdGFuZGFyZCBkZXZpYXRpb24gb2YgdGhlIHJlc3VsdGluZyBsaXN0IHRvIGNvbmZpcm0gdGhlIHJlc3VsdHMgb2YgNiBhbmQgNy4gU3RhcnQgeW91ciBjb2RlIGJ5IHNldHRpbmcgdGhlIHNlZWQgdG8gMSB3aXRoIHNldC5zZWVkKDEpCmBgYHtyfQpCIDwtIDEwMDAKbiA8LSAxMDAwICAKCnJlc3VsdHMgPC0gcmVwbGljYXRlKEIsIHN1bShzYW1wbGUoYygxNywgLTEpLCBuLCBwcm9iID0gYygyLzM4LDM2LzM4KSwgcmVwbGFjZSA9IFRSVUUpKSkKYGBgCgoxMC4gTm93IGNoZWNrIHlvdXIgYW5zd2VyIHRvIDggdXNpbmcgdGhlIE1vbnRlIENhcmxvIHJlc3VsdC4KYGBge3J9Cm1lYW4ocmVzdWx0cz4wKQoj65GQIOqwkuydtCDqsbDsnZgg7J287LmY7ZWc64ukLgpgYGAKCjExLiBUaGUgTW9udGUgQ2FybG8gcmVzdWx0IGFuZCB0aGUgQ0xUIGFwcHJveGltYXRpb24gYXJlIGNsb3NlLCBidXQgbm90IHRoYXQgY2xvc2UuIFdoYXQgY291bGQgYWNjb3VudCBmb3IgdGhpcz8KCioqQy4gdGhlIGRpZmZlcmVuY2UgaXMgd2l0aGluIHJvdW5kaW5nIGVycm9yLioqCgoxMi4gTm93IGNyZWF0ZSBhIHJhbmRvbSB2YXJpYWJsZSBZIHRoYXQgaXMgeW91ciBhdmVyYWdlIHdpbm5pbmdzIHBlciBiZWV0IGFmdGVyIHBsYXlpbmcgb2ZmIHlvdXIgd2lubmluZ3MgYWZ0ZXIgYmV0dGluZyBvbiBncmVlbiAxMDAwIHRpbWVzLgpgYGB7cn0KbXlfZnVuY3Rpb24gPC0gZnVuY3Rpb24obil7CiAgWCA8LSBzYW1wbGUoYygxNywgLTEpLCBuLCBwcm9iID0gYygxLzE5LCAxOC8xOSksIHJlcGxhY2UgPSBUUlVFKQogIG1lYW4oWCA9PSAxNykKfQpteV9mdW5jdGlvbihuKQpgYGAKCjEzLiBXaGF0IGlzIHRoZSBleHBlY3RlZCB2YWx1ZSBvZiBZPwpgYGB7cn0KCmBgYAoK</div>
 
 
 
