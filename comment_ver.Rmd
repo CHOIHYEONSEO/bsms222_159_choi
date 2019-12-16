@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# comment 1
+지적사항이 없었다
+
+
+# comment 2
+### 지적사항
+-PolyPhen score 와 SIFT score는 반대되는 의미를 가지고 있기 때문에, x축 혹은 y축으로 순서를 반대로 하여 분포가 겹치는 형식으로 플랏을 만들어도 좋을 것 같다.
+
+-legend를 SIFT가 아닌 ‘Mutant가 미치는 영향’ 등으로 조금 더 자세히 알려주면 좋을 것 같다. 
+
+### 반영한 수정본
+```{r}
+d1 %>% ggplot(aes(as.numeric(sift_n), as.numeric(poly_n), col = sift_c)) + geom_point(size = 0.5) + labs(x='SIFT', y='PolyPhen', title = 'Relationship between SIFT&PolyPhen', color = "SIFT") + labs(col = "Mutant's degree of risk:SIFT") + scale_x_reverse()
+```
+
+
+# comment 3
+### 지적사항
+-값의 전체적 흐름이 아니라 개별값에 대한 표현이 부족하다. 직선 그래프를 하나 추가하여 임계점에 대한 논의를 하는 등 더 많은 설명이 있으면 좋겠다.
+
+**이 그래프는 처음부터 MPC, PolyPhen 값에 대한 patient와 normal 집단 간의 차이를 보려고 제작되었으므로 의도적으로 개별값 대신 전체의 흐름을 나타내었다. 그리고 임계점 역시 개별값 보단 전체의 흐름에 초점을 맞춘 것이라 생각한다. 또한 만약 임계점을 그리게 된다면 patient와 normal의 값이 전체적으로 고르게 분산되어 있는것이 아니라 양 극단에 치우쳐진 경향이 있어 임계점보다는 각각의 밀도를 알아보는 것이 나을 것 같아 각 집단별 밀도함수를 추가하였다.**
+
+### 반영한 수정본
+```{r}
+d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = disease)) + geom_point(size = 0.5) + labs(x='MPC', y='PolyPhen', title = 'Relationship between MPC&PolyPhen&Presence of disease', color = 'presence of disease')
+
+d1 %>% ggplot() + geom_density(aes(as.numeric(as.character(MPC))), col = 'purple') + geom_density(aes(as.numeric(poly_n)), col = 'yellow') + labs(x = 'polyphen(yellow)/MPC(purple)', title = 'Density of polyphen/MPC different by presence of disease') + facet_grid(~disease)
+```
+
+
+# comment 4
+### 지적사항
+-플롯에서 deleterious와 tolerated의 구분이 명확히 가지 않는다. 색 구분을 명확히 하거나 deleterious-tolerated 플롯과 각각의 low confidence를 다른 플롯에 표기하는 것도 좋을 것 같다.
+
+**이미 deleterious 와 tolerated는 청색과 적색을 사용하여 충분히 구분이 된다고 생각한다. 그리고 각각의 low confidence는 관찰값의 수가 적기 때문에 굳이 구분하여 그래프를 작성할 필요가 없다고 생각해 이 코멘트는 반영하지 않았다.**
+
+-데이터가 많이 겹쳐 있으므로 투명도를 낮추는 것도 이해에 도움이 될 것 같다.
+
+### 반영한 수정본
+```{r}
+d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = sift_c)) + geom_point(size = 0.5, alpha = 0.4) + labs(x='MPC', y='PolyPhen', title = 'Relationship between MPC&PolyPhen&SIFT', color = "SIFT")
+```
+
+
+# comment 5
+
+### 지적사항
+-그래프에 점으로 데이터를 표기하기 때문에 점이 점을 덮어버리게 되는 문제가 발생한다.
+
+### 반영한 수정본
+```{r}
+d1 %>% ggplot(aes(as.numeric(as.character(MPC)), as.numeric(poly_n), col = disease)) + geom_point(size = 0.5, alpha = 0.4) + labs(x='MPC', y='PolyPhen', title = 'Relationship between MPC&PolyPhen&Presence of disease', color = 'presence of disease')
+```
+
+
+# comment 6
+
+### 지적사항
+-sift에서low_confidence를 각각 tolerated와 deleterious에 합쳐서 두 그룹으로만 나타내는것이 더 깔끔할 것 같다.
+
+**비록 low_confidence에 해당하는 것들이 minor한 경우지만 그래도 보다 정확한 그래프를 그리고 싶기 때문에 low_confidence와 그렇지 않은 경우는 구분하여 지금처럼 SIFT를 네가지 범례로 나타내고 싶다. 그래서 이 comment는 반영하지 않았다.**
